@@ -343,3 +343,47 @@ dialog::backdrop {
     flex-direction: column;
   }
 }
+
+.payment-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.payment-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.payment-amount {
+  margin-top: 0.8rem;
+  font-size: 1.65rem;
+  font-weight: 900;
+}
+
+.payment-status {
+  display: inline-flex;
+  padding: 0.32rem 0.6rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+  font-size: 0.78rem;
+  font-weight: 850;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.payment-status.paid { color: #7df3b1; background: rgba(36, 185, 109, 0.14); }
+.payment-status.pending { color: #ffd978; background: rgba(235, 173, 37, 0.14); }
+.payment-status.failed,
+.payment-status.cancelled { color: #ff9b9b; background: rgba(226, 74, 74, 0.14); }
+.payment-status.refunded { color: #bcb2ff; background: rgba(124, 92, 255, 0.14); }
+
+.payment-banner {
+  margin-bottom: 1rem;
+  border: 1px solid var(--line-strong);
+}
+
+.button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}

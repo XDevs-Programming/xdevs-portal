@@ -19,6 +19,7 @@
 
       <nav class="sidebar-nav">
         <button class="sidebar-link active" type="button">Overview</button>
+        <a class="sidebar-link" href="#payments">Payments</a>
         <button
           class="sidebar-link"
           type="button"
@@ -63,6 +64,8 @@
         </div>
       </header>
 
+      <div id="payment-banner" class="notice payment-banner" hidden></div>
+
       <section class="stat-grid">
         <article class="stat-card">
           <span class="stat-label">Total commissions</span>
@@ -79,6 +82,14 @@
         <article class="stat-card">
           <span class="stat-label">Completed</span>
           <strong class="stat-value" id="stat-completed">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Amount due</span>
+          <strong class="stat-value" id="stat-amount-due">£0.00</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Paid</span>
+          <strong class="stat-value" id="stat-amount-paid">£0.00</strong>
         </article>
       </section>
 
@@ -101,6 +112,13 @@
         <div class="commission-list" id="commission-list">
           <p class="notice">Loading commissions…</p>
         </div>
+      </section>
+
+      <section class="panel" id="payments">
+        <div class="panel-header">
+          <div><h2>Payments</h2><p class="commission-meta">Secure payment requests from XDevs Programming.</p></div>
+        </div>
+        <div class="payment-list" id="client-payment-list"><p class="notice">Loading payments…</p></div>
       </section>
     </main>
   </div>

@@ -5,11 +5,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindSidebar();
   bindUser(user);
   bindTabs();
-  await Promise.all([loadCommissions(), loadReviews()]);
+  document.getElementById("payment-form")?.addEventListener("submit", createPaymentRequest);
+  document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => document.getElementById(button.dataset.openDialog)?.showModal()));
+  document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog")?.close()));
+  await Promise.all([loadCommissions(), loadReviews(), loadPayments()]);
 });
 
 let allCommissions = [];
 let allReviews = [];
+let allPayments = [];
 
 function bindUser(user) {
   document.querySelectorAll("[data-user-name]").forEach((element) => {
@@ -57,6 +61,7 @@ async function loadCommissions() {
     allCommissions = result.commissions;
     renderCommissions();
     updateStats();
+    populatePaymentCommissionOptions();
   } catch (error) {
     list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
   }
@@ -238,6 +243,82 @@ async function moderateReview(button) {
   } catch (error) {
     alert(error.message);
   }
+}
+
+
+async function loadPayments() {
+  const list = document.getElementById("admin-payment-list");
+  try {
+    const result = await XDevsAuth.apiFetch("/api/payments");
+    allPayments = result.payments;
+    renderPayments();
+    updatePaymentStats();
+  } catch (error) {
+    if (list) list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function renderPayments() {
+  const list = document.getElementById("admin-payment-list");
+  if (!list) return;
+  if (!allPayments.length) {
+    list.innerHTML = '<p class="notice">No payment requests found.</p>';
+    return;
+  }
+  list.innerHTML = allPayments.map((payment) => `
+    <article class="payment-card" data-payment-id="${payment._id}">
+      <div class="commission-header">
+        <div><h3>${escapeHtml(payment.commission?.title || "Commission payment")}</h3>
+        <div class="commission-meta">${escapeHtml(payment.client?.username || "Client")} · ${escapeHtml(payment.client?.email || "")} · ${formatDate(payment.createdAt)}</div></div>
+        <span class="payment-status ${payment.status}">${escapeHtml(payment.status)}</span>
+      </div>
+      <div class="payment-amount">${formatMoney(payment.amount, payment.currency)}</div>
+      ${payment.description ? `<p class="commission-description">${escapeHtml(payment.description)}</p>` : ""}
+      ${payment.paidAt ? `<div class="commission-meta">Paid ${formatDate(payment.paidAt)}</div>` : ""}
+      ${payment.status === "pending" ? '<div class="card-actions"><button class="button small danger" data-cancel-payment>Cancel request</button></div>' : ""}
+    </article>`).join("");
+  list.querySelectorAll("[data-cancel-payment]").forEach((button) => button.addEventListener("click", () => cancelPayment(button)));
+}
+
+async function createPaymentRequest(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = Object.fromEntries(new FormData(form));
+  try {
+    await XDevsAuth.apiFetch("/api/payments", { method: "POST", body: JSON.stringify(data) });
+    form.reset(); form.closest("dialog").close(); await loadPayments();
+  } catch (error) { alert(error.message); }
+}
+
+async function cancelPayment(button) {
+  if (!confirm("Cancel this outstanding payment request?")) return;
+  const id = button.closest("[data-payment-id]").dataset.paymentId;
+  try {
+    await XDevsAuth.apiFetch(`/api/payments/${id}/cancel`, { method: "PATCH" });
+    await loadPayments();
+  } catch (error) { alert(error.message); }
+}
+
+function populatePaymentCommissionOptions() {
+  const select = document.getElementById("payment-commission");
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = '<option value="">Choose a commission</option>' + allCommissions
+    .filter((item) => item.status !== "Rejected")
+    .map((item) => `<option value="${item._id}">${escapeHtml(item.client?.username || "Client")} — ${escapeHtml(item.title)}</option>`).join("");
+  select.value = current;
+}
+
+function updatePaymentStats() {
+  const paid = allPayments.filter((p) => p.status === "paid").reduce((sum, p) => sum + p.amount, 0);
+  const outstanding = allPayments.filter((p) => p.status === "pending").reduce((sum, p) => sum + p.amount, 0);
+  setText("stat-revenue", formatMoney(paid, "gbp"));
+  setText("stat-outstanding", formatMoney(outstanding, "gbp"));
+  setText("stat-payments", allPayments.filter((p) => p.status === "paid").length);
+}
+
+function formatMoney(pence, currency = "gbp") {
+  return new Intl.NumberFormat("en-GB", { style: "currency", currency: currency.toUpperCase() }).format((Number(pence) || 0) / 100);
 }
 
 function updateStats() {
