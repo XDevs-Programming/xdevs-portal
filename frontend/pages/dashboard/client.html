@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Client Dashboard | XDevs Programming</title>
+  <link rel="icon" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <a class="sidebar-brand" href="../../index.html">
+        <span>X</span>
+        <span>XDevs Portal</span>
+      </a>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" type="button">Overview</button>
+        <button
+          class="sidebar-link"
+          type="button"
+          data-open-dialog="commission-dialog"
+        >
+          New commission
+        </button>
+        <button
+          class="sidebar-link"
+          type="button"
+          data-open-dialog="review-dialog"
+        >
+          Leave a review
+        </button>
+        <a class="sidebar-link" href="../../index.html">Public website</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-link" type="button" data-logout>Log out</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <div>
+          <button
+            class="button secondary mobile-sidebar-toggle"
+            type="button"
+            data-sidebar-toggle
+          >
+            Menu
+          </button>
+
+          <div class="dashboard-heading">
+            <h1>Welcome, <span data-user-name>Client</span></h1>
+            <p>Track your projects and submit new work.</p>
+          </div>
+        </div>
+
+        <div class="user-summary">
+          <img class="user-avatar" data-user-avatar alt="">
+        </div>
+      </header>
+
+      <section class="stat-grid">
+        <article class="stat-card">
+          <span class="stat-label">Total commissions</span>
+          <strong class="stat-value" id="stat-total">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Active</span>
+          <strong class="stat-value" id="stat-active">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Pending</span>
+          <strong class="stat-value" id="stat-pending">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Completed</span>
+          <strong class="stat-value" id="stat-completed">0</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Your commissions</h2>
+            <p class="commission-meta">Newest submissions appear first.</p>
+          </div>
+
+          <button
+            class="button"
+            type="button"
+            data-open-dialog="commission-dialog"
+          >
+            New commission
+          </button>
+        </div>
+
+        <div class="commission-list" id="commission-list">
+          <p class="notice">Loading commissions…</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="commission-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2>New commission</h2>
+          <p class="commission-meta">Describe the work you need.</p>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog>×</button>
+      </div>
+
+      <form class="form-grid" id="commission-form">
+        <label>
+          Project title
+          <input name="title" maxlength="100" required>
+        </label>
+
+        <div class="form-row">
+          <label>
+            Category
+            <select name="category" required>
+              <option value="">Choose a category</option>
+              <option>Website</option>
+              <option>Discord Bot</option>
+              <option>Automation</option>
+              <option>API</option>
+              <option>Roblox</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label>
+            Budget
+            <input name="budget" placeholder="Example: £150">
+          </label>
+        </div>
+
+        <label>
+          Preferred deadline
+          <input type="date" name="deadline">
+        </label>
+
+        <label>
+          Description
+          <textarea
+            name="description"
+            maxlength="4000"
+            required
+            placeholder="Explain the required features, users and expected outcome."
+          ></textarea>
+        </label>
+
+        <button class="button" type="submit">Submit commission</button>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="review-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2>Leave a review</h2>
+          <p class="commission-meta">Only completed work can be reviewed.</p>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog>×</button>
+      </div>
+
+      <form class="form-grid" id="review-form">
+        <label>
+          Commission
+          <select name="commissionId" id="review-commission" required></select>
+        </label>
+
+        <label>
+          Rating
+          <select name="rating" required>
+            <option value="">Choose a rating</option>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Very good</option>
+            <option value="3">3 — Good</option>
+            <option value="2">2 — Needs improvement</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </label>
+
+        <label>
+          Review
+          <textarea name="content" maxlength="1200" required></textarea>
+        </label>
+
+        <button class="button" type="submit">Submit review</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/client-dashboard.js"></script>
+</body>
+</html>

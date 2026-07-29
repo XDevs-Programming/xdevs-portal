@@ -1,0 +1,3 @@
+/login /pages/auth/login.html 200
+/client /pages/dashboard/client.html 200
+/admin /pages/dashboard/admin.html 200

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="XDevs Programming builds websites, Discord bots, APIs and automation systems."
+  >
+  <title>XDevs Programming</title>
+  <link rel="icon" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar container" aria-label="Main navigation">
+      <a class="brand" href="#top">
+        <span class="brand-mark">X</span>
+        <span>XDevs Programming</span>
+      </a>
+
+      <button
+        class="button secondary small menu-toggle"
+        type="button"
+        data-menu-toggle
+      >
+        Menu
+      </button>
+
+      <div class="nav-links" data-nav-menu>
+        <a href="#services">Services</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
+        <a class="button small" href="pages/auth/login.html">Client login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">CUSTOM SOFTWARE · BUILT PROPERLY</p>
+          <h1>
+            Ideas turned into
+            <span class="gradient-text">working systems.</span>
+          </h1>
+          <p class="hero-copy">
+            Professional websites, Discord bots, APIs and automation tools
+            designed around your project rather than forced into a template.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button" href="pages/auth/login.html">Request a quote</a>
+            <a class="button secondary" href="#services">Explore services</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="Development status panel">
+          <div class="terminal-top">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="terminal-content">
+            <div><strong>✓</strong> Requirements mapped</div>
+            <div><strong>✓</strong> Architecture planned</div>
+            <div><strong>✓</strong> Secure authentication</div>
+            <div><strong>✓</strong> Deployment configured</div>
+            <div><strong>→</strong> Project ready to build</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">SERVICES</p>
+          <h2>Development support from first idea to deployment.</h2>
+          <p>
+            Each project is scoped clearly, tracked through the client portal
+            and built with maintainable code.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="service-card">
+            <div class="service-icon">01</div>
+            <h3>Web development</h3>
+            <p>
+              Responsive websites, dashboards, portals and full-stack web
+              applications.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">02</div>
+            <h3>Discord bots</h3>
+            <p>
+              Moderation, ticketing, marketplace, reputation, logging and
+              automation systems.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">03</div>
+            <h3>APIs and automation</h3>
+            <p>
+              Database-backed APIs and tools that remove repetitive manual
+              work.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">PRICING</p>
+          <h2>Clear starting points, final quotes based on scope.</h2>
+        </div>
+
+        <div class="grid-3">
+          <article class="price-card">
+            <h3>Small build</h3>
+            <span class="price">From £40</span>
+            <ul>
+              <li>Single-purpose tool</li>
+              <li>Basic website page</li>
+              <li>Simple Discord command set</li>
+            </ul>
+          </article>
+
+          <article class="price-card featured">
+            <h3>Standard project</h3>
+            <span class="price">From £120</span>
+            <ul>
+              <li>Multi-page website</li>
+              <li>Database integration</li>
+              <li>Custom dashboard or bot</li>
+            </ul>
+          </article>
+
+          <article class="price-card">
+            <h3>Advanced system</h3>
+            <span class="price">Custom quote</span>
+            <ul>
+              <li>Full-stack platforms</li>
+              <li>Complex automation</li>
+              <li>Long-term development</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reviews">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">CLIENT REVIEWS</p>
+          <h2>Feedback from completed projects.</h2>
+        </div>
+
+        <div class="grid-3" data-review-container>
+          <p class="empty-state">Loading approved reviews…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ</p>
+          <h2>Common questions before starting.</h2>
+        </div>
+
+        <div class="faq-list">
+          <article class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How do I request a commission?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              Sign in with Discord or Google, open the client dashboard and
+              complete the new commission form.
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Can I track progress?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              Yes. Your dashboard shows the current project status and any
+              notes added by the administrator.
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Are prices fixed?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              Listed prices are starting points. A final quote depends on the
+              features, complexity and delivery requirements.
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <h2>Ready to discuss your project?</h2>
+          <p>
+            Create a secure portal account and submit your requirements in one
+            place.
+          </p>
+          <a class="button" href="pages/auth/login.html">Open client portal</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <span>© 2026 XDevs Programming</span>
+      <span>Websites · Bots · APIs · Automation</span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/faq.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

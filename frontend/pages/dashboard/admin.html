@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Admin Dashboard | XDevs Programming</title>
+  <link rel="icon" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <a class="sidebar-brand" href="../../index.html">
+        <span>X</span>
+        <span>XDevs Admin</span>
+      </a>
+
+      <nav class="sidebar-nav">
+        <button
+          class="sidebar-link active"
+          type="button"
+          data-view="commissions"
+        >
+          Commissions
+        </button>
+
+        <button
+          class="sidebar-link"
+          type="button"
+          data-view="reviews"
+        >
+          Reviews
+        </button>
+
+        <a class="sidebar-link" href="../../index.html">Public website</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-link" type="button" data-logout>Log out</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <div>
+          <button
+            class="button secondary mobile-sidebar-toggle"
+            type="button"
+            data-sidebar-toggle
+          >
+            Menu
+          </button>
+
+          <div class="dashboard-heading">
+            <h1>Admin dashboard</h1>
+            <p>Signed in as <span data-user-name>Admin</span>.</p>
+          </div>
+        </div>
+
+        <img class="user-avatar" data-user-avatar alt="">
+      </header>
+
+      <section class="stat-grid">
+        <article class="stat-card">
+          <span class="stat-label">Total commissions</span>
+          <strong class="stat-value" id="stat-total">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Pending</span>
+          <strong class="stat-value" id="stat-pending">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Active</span>
+          <strong class="stat-value" id="stat-active">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Completed</span>
+          <strong class="stat-value" id="stat-completed">0</strong>
+        </article>
+      </section>
+
+      <section class="panel" data-section="commissions">
+        <div class="panel-header">
+          <div>
+            <h2>All commissions</h2>
+            <p class="commission-meta">Update statuses and client notes.</p>
+          </div>
+        </div>
+
+        <div class="commission-list" id="admin-commission-list">
+          <p class="notice">Loading commissions…</p>
+        </div>
+      </section>
+
+      <section class="panel" data-section="reviews" hidden>
+        <div class="panel-header">
+          <div>
+            <h2>Review moderation</h2>
+            <p class="commission-meta">
+              Approve, feature or hide submitted reviews.
+            </p>
+          </div>
+        </div>
+
+        <div class="review-list" id="admin-review-list">
+          <p class="notice">Loading reviews…</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/admin-dashboard.js"></script>
+</body>
+</html>

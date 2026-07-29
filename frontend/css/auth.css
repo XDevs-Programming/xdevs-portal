@@ -1,0 +1,130 @@
+@import url("./reset.css");
+@import url("./variables.css");
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(124, 92, 255, 0.18), transparent 32rem),
+    radial-gradient(circle at 85% 85%, rgba(45, 156, 255, 0.12), transparent 30rem),
+    var(--bg);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: min(100%, 30rem);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(16, 23, 38, 0.94);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.auth-heading {
+  margin: 2rem 0 1.5rem;
+}
+
+.auth-heading h1 {
+  font-size: clamp(2rem, 7vw, 2.7rem);
+  line-height: 1.05;
+}
+
+.auth-heading p,
+.privacy-note,
+.status-card p {
+  margin-top: 0.8rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.provider-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.provider-button {
+  width: 100%;
+  min-height: 3.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 0.9rem;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.provider-button.discord {
+  color: white;
+  background: #5865f2;
+}
+
+.provider-button.google {
+  color: #202124;
+  border-color: #d8dce5;
+  background: white;
+}
+
+.privacy-note {
+  font-size: 0.85rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--primary-light);
+}
+
+.message {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: var(--radius-sm);
+  color: #ffd7dc;
+  border: 1px solid rgba(255, 104, 122, 0.35);
+  background: rgba(255, 104, 122, 0.1);
+}
+
+.status-card {
+  text-align: center;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1.4rem;
+  border: 0.25rem solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

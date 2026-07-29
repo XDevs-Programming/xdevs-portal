@@ -1,0 +1,55 @@
+xdevs-complete-portal/
+├── DEPLOYMENT.md
+├── README.md
+├── backend/
+    ├── .env.example
+    ├── .gitignore
+    ├── config/
+        ├── db.js
+    ├── controllers/
+        ├── authController.js
+        ├── commissionController.js
+        ├── reviewController.js
+    ├── middleware/
+        ├── auth.js
+        ├── errorHandler.js
+        ├── notFound.js
+    ├── models/
+        ├── Commission.js
+        ├── Review.js
+        ├── User.js
+    ├── package.json
+    ├── routes/
+        ├── authRoutes.js
+        ├── commissionRoutes.js
+        ├── reviewRoutes.js
+    ├── server.js
+    ├── utils/
+        ├── oauth.js
+├── frontend/
+    ├── _headers
+    ├── _redirects
+    ├── assets/
+        ├── favicon.svg
+    ├── css/
+        ├── auth.css
+        ├── dashboard.css
+        ├── reset.css
+        ├── style.css
+        ├── variables.css
+    ├── index.html
+    ├── js/
+        ├── admin-dashboard.js
+        ├── auth.js
+        ├── client-dashboard.js
+        ├── config.js
+        ├── faq.js
+        ├── home.js
+        ├── navigation.js
+    ├── pages/
+        ├── auth/
+            ├── callback.html
+            ├── login.html
+        ├── dashboard/
+            ├── admin.html
+            ├── client.html
