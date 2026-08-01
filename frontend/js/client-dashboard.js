@@ -7,8 +7,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindModals();
   bindForms();
   showPaymentReturnMessage();
-  await Promise.all([loadCommissions(), loadPayments()]);
+  await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive()]);
   bindClientFiles();
+  bindClientInvoiceArchive();
 });
 
 let clientCommissions = [];
@@ -337,4 +338,73 @@ async function secureUpload({ commissionId, file, category, progressElement }) {
 async function openSecureDownload(fileId) {
   const result = await XDevsAuth.apiFetch(`/api/files/${fileId}/download`);
   window.location.assign(result.downloadUrl);
+}
+
+
+let clientInvoiceArchive = [];
+
+function bindClientInvoiceArchive() {
+  ["client-invoice-search", "client-invoice-status", "client-invoice-sort"].forEach((id) => {
+    document.getElementById(id)?.addEventListener(id.includes("search") ? "input" : "change", renderClientInvoiceArchive);
+  });
+  document.getElementById("client-invoice-csv")?.addEventListener("click", () => downloadInvoiceExport("csv", false));
+  document.getElementById("client-invoice-zip")?.addEventListener("click", () => downloadInvoiceExport("zip", false));
+}
+
+async function loadClientInvoiceArchive() {
+  const list = document.getElementById("client-invoice-list");
+  if (!list) return;
+  try {
+    const result = await XDevsAuth.apiFetch("/api/payments/invoices/mine");
+    clientInvoiceArchive = result.invoices || [];
+    renderClientInvoiceArchive();
+  } catch (error) {
+    list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function renderClientInvoiceArchive() {
+  const list = document.getElementById("client-invoice-list");
+  if (!list) return;
+  const search = document.getElementById("client-invoice-search")?.value.trim().toLowerCase() || "";
+  const status = document.getElementById("client-invoice-status")?.value || "all";
+  const oldest = document.getElementById("client-invoice-sort")?.value === "oldest";
+  const invoices = clientInvoiceArchive
+    .filter((item) => status === "all" || item.status === status)
+    .filter((item) => !search || [item.invoiceNumber, item.commissionSnapshot?.title, item.commission?.title, item.description].some((value) => String(value || "").toLowerCase().includes(search)))
+    .sort((a, b) => (new Date(a.invoiceIssuedAt) - new Date(b.invoiceIssuedAt)) * (oldest ? 1 : -1));
+  if (!invoices.length) {
+    list.innerHTML = '<p class="notice">No invoices match these filters.</p>';
+    return;
+  }
+  list.innerHTML = invoices.map(invoiceArchiveCard).join("");
+  list.querySelectorAll("[data-archive-invoice-id]").forEach((button) => button.addEventListener("click", () => downloadInvoice({
+    dataset: { invoiceId: button.dataset.archiveInvoiceId },
+    disabled: false,
+    textContent: button.textContent
+  })));
+}
+
+function invoiceArchiveCard(item) {
+  const title = item.commissionSnapshot?.title || item.commission?.title || "Commission";
+  return `<article class="invoice-card">
+    <div class="invoice-card-main">
+      <div><span class="invoice-number">${escapeHtml(item.invoiceNumber)}</span><h3>${escapeHtml(title)}</h3><div class="commission-meta">Issued ${formatDate(item.invoiceIssuedAt || item.createdAt)}</div></div>
+      <div class="invoice-card-total"><strong>${formatMoney(item.amount, item.currency)}</strong><span class="payment-status ${item.status}">${escapeHtml(item.status.replaceAll("_", " "))}</span></div>
+    </div>
+    <div class="card-actions"><button class="button secondary small" type="button" data-archive-invoice-id="${item._id}">Download PDF</button></div>
+  </article>`;
+}
+
+async function downloadInvoiceExport(type, admin) {
+  const endpoint = type === "zip" ? "/api/payments/invoices/export.zip" : "/api/payments/invoices/export.csv";
+  try {
+    const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}${endpoint}`, { headers: { Authorization: `Bearer ${XDevsAuth.getToken()}` } });
+    if (!response.ok) throw new Error("Could not export invoices.");
+    const blob = await response.blob();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = type === "zip" ? "xdevs-invoice-archive.zip" : "xdevs-invoice-archive.csv";
+    document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(link.href);
+  } catch (error) { alert(error.message); }
 }

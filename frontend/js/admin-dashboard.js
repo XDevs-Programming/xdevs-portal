@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateBillingFields();
   document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => document.getElementById(button.dataset.openDialog)?.showModal()));
   document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog")?.close()));
-  await Promise.all([loadCommissions(), loadReviews(), loadPayments()]);
+  await Promise.all([loadCommissions(), loadReviews(), loadPayments(), loadAdminInvoiceArchive()]);
+  bindAdminInvoiceArchive();
   bindAdminFiles();
 });
 
@@ -567,4 +568,89 @@ async function secureUpload({ commissionId, file, category, progressElement }) {
 async function openSecureDownload(fileId) {
   const result = await XDevsAuth.apiFetch(`/api/files/${fileId}/download`);
   window.location.assign(result.downloadUrl);
+}
+
+
+let adminInvoiceArchive = [];
+let adminInvoiceSummary = {};
+let invoiceFilterTimer;
+
+function bindAdminInvoiceArchive() {
+  const instant = ["admin-invoice-status", "admin-invoice-from", "admin-invoice-to", "admin-invoice-sort"];
+  instant.forEach((id) => document.getElementById(id)?.addEventListener("change", loadAdminInvoiceArchive));
+  document.getElementById("admin-invoice-search")?.addEventListener("input", () => {
+    clearTimeout(invoiceFilterTimer);
+    invoiceFilterTimer = setTimeout(loadAdminInvoiceArchive, 250);
+  });
+  document.getElementById("admin-invoice-csv")?.addEventListener("click", () => downloadAdminInvoiceExport("csv"));
+  document.getElementById("admin-invoice-zip")?.addEventListener("click", () => downloadAdminInvoiceExport("zip"));
+}
+
+function adminInvoiceQuery() {
+  const params = new URLSearchParams();
+  const fields = {
+    search: document.getElementById("admin-invoice-search")?.value.trim(),
+    status: document.getElementById("admin-invoice-status")?.value,
+    from: document.getElementById("admin-invoice-from")?.value,
+    to: document.getElementById("admin-invoice-to")?.value,
+    sort: document.getElementById("admin-invoice-sort")?.value
+  };
+  Object.entries(fields).forEach(([key, value]) => { if (value && value !== "all" && value !== "newest") params.set(key, value); });
+  return params.toString();
+}
+
+async function loadAdminInvoiceArchive() {
+  const list = document.getElementById("admin-invoice-list");
+  if (!list) return;
+  try {
+    const query = adminInvoiceQuery();
+    const result = await XDevsAuth.apiFetch(`/api/payments/invoices/archive${query ? `?${query}` : ""}`);
+    adminInvoiceArchive = result.invoices || [];
+    adminInvoiceSummary = result.summary || {};
+    renderAdminInvoiceArchive();
+    setText("invoice-total", adminInvoiceSummary.totalInvoices || 0);
+    setText("invoice-revenue", formatMoney(adminInvoiceSummary.revenue || 0, "gbp"));
+    setText("invoice-outstanding", formatMoney(adminInvoiceSummary.outstanding || 0, "gbp"));
+    setText("invoice-pro-bono", adminInvoiceSummary.proBonoCount || 0);
+  } catch (error) {
+    list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function renderAdminInvoiceArchive() {
+  const list = document.getElementById("admin-invoice-list");
+  if (!adminInvoiceArchive.length) {
+    list.innerHTML = '<p class="notice">No invoices match these filters.</p>';
+    return;
+  }
+  list.innerHTML = adminInvoiceArchive.map((item) => {
+    const client = item.clientSnapshot?.username || item.client?.username || "Client";
+    const email = item.clientSnapshot?.email || item.client?.email || "";
+    const title = item.commissionSnapshot?.title || item.commission?.title || "Commission";
+    return `<article class="invoice-card">
+      <div class="invoice-card-main">
+        <div><span class="invoice-number">${escapeHtml(item.invoiceNumber)}</span><h3>${escapeHtml(title)}</h3><div class="commission-meta">${escapeHtml(client)}${email ? ` · ${escapeHtml(email)}` : ""} · Issued ${formatDate(item.invoiceIssuedAt || item.createdAt)}</div></div>
+        <div class="invoice-card-total"><strong>${formatMoney(item.amount, item.currency)}</strong><span class="payment-status ${item.status}">${escapeHtml(item.status.replaceAll("_", " "))}</span></div>
+      </div>
+      <div class="card-actions"><button class="button secondary small" type="button" data-admin-archive-invoice="${item._id}">Download / regenerate PDF</button></div>
+    </article>`;
+  }).join("");
+  list.querySelectorAll("[data-admin-archive-invoice]").forEach((button) => button.addEventListener("click", () => downloadInvoice({
+    dataset: { invoiceId: button.dataset.adminArchiveInvoice }, disabled: false, textContent: button.textContent
+  })));
+}
+
+async function downloadAdminInvoiceExport(type) {
+  const query = adminInvoiceQuery();
+  const path = type === "zip" ? "/api/payments/invoices/export.zip" : "/api/payments/invoices/export.csv";
+  try {
+    const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}${path}${query ? `?${query}` : ""}`, { headers: { Authorization: `Bearer ${XDevsAuth.getToken()}` } });
+    if (!response.ok) throw new Error("Could not export invoice archive.");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = type === "zip" ? "xdevs-invoice-archive.zip" : "xdevs-invoice-archive.csv";
+    document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+  } catch (error) { alert(error.message); }
 }

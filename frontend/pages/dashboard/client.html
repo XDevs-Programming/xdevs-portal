@@ -20,6 +20,7 @@
       <nav class="sidebar-nav">
         <button class="sidebar-link active" type="button">Overview</button>
         <a class="sidebar-link" href="#payments">Payments</a>
+        <a class="sidebar-link" href="#invoices">Invoices</a>
         <a class="sidebar-link" href="#files">Files</a>
         <button
           class="sidebar-link"
@@ -130,6 +131,24 @@
         </div>
         <div class="upload-progress" id="client-upload-progress" hidden><span></span></div>
         <div class="file-list" id="client-file-list"><p class="notice">Choose a commission to view files.</p></div>
+      </section>
+
+
+
+      <section class="panel" id="invoices">
+        <div class="panel-header">
+          <div><h2>Invoice archive</h2><p class="commission-meta">Search, filter and download every invoice issued to your account.</p></div>
+          <div class="card-actions">
+            <button class="button secondary small" id="client-invoice-csv" type="button">Export CSV</button>
+            <button class="button secondary small" id="client-invoice-zip" type="button">Download all PDFs</button>
+          </div>
+        </div>
+        <div class="invoice-filters">
+          <label>Search<input id="client-invoice-search" type="search" placeholder="Invoice number or commission"></label>
+          <label>Status<select id="client-invoice-status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="pro_bono">Pro bono</option><option value="refunded">Refunded</option><option value="cancelled">Cancelled</option><option value="failed">Failed</option></select></label>
+          <label>Sort<select id="client-invoice-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+        </div>
+        <div class="invoice-list" id="client-invoice-list"><p class="notice">Loading invoice archive…</p></div>
       </section>
 
       <section class="panel" id="payments">

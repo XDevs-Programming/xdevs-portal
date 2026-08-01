@@ -446,3 +446,33 @@ dialog::backdrop {
   .file-toolbar, .admin-file-toolbar { grid-template-columns: 1fr; }
   .file-card { align-items: flex-start; flex-direction: column; }
 }
+
+
+/* Invoice archive */
+.invoice-filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) minmax(150px, 1fr) minmax(145px, .8fr);
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+.admin-invoice-filters { grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(130px, 1fr)); }
+.invoice-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 1rem; }
+.invoice-list { display: grid; gap: .7rem; }
+.invoice-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.025);
+}
+.invoice-card-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.invoice-number { display: inline-block; margin-bottom: .25rem; color: var(--primary-light); font-size: .78rem; font-weight: 850; letter-spacing: .04em; }
+.invoice-card-total { display: grid; justify-items: end; gap: .45rem; white-space: nowrap; }
+.invoice-card-total strong { font-size: 1.25rem; }
+@media (max-width: 900px) {
+  .invoice-filters, .admin-invoice-filters, .invoice-summary-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 580px) {
+  .invoice-filters, .admin-invoice-filters, .invoice-summary-grid { grid-template-columns: 1fr; }
+  .invoice-card-main { flex-direction: column; }
+  .invoice-card-total { justify-items: start; }
+}

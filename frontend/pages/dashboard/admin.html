@@ -27,6 +27,7 @@
         </button>
 
         <button class="sidebar-link" type="button" data-view="payments">Payments</button>
+        <button class="sidebar-link" type="button" data-view="invoices">Invoice archive</button>
         <button class="sidebar-link" type="button" data-view="files">Files</button>
 
         <button
@@ -109,6 +110,32 @@
         <div class="payment-list" id="admin-payment-list"><p class="notice">Loading payments…</p></div>
       </section>
 
+
+
+      <section class="panel" data-section="invoices" hidden>
+        <div class="panel-header">
+          <div><h2>Invoice archive</h2><p class="commission-meta">Permanent records for paid, outstanding, refunded, cancelled and pro bono invoices.</p></div>
+          <div class="card-actions">
+            <button class="button secondary small" id="admin-invoice-csv" type="button">Export CSV</button>
+            <button class="button secondary small" id="admin-invoice-zip" type="button">Download PDF archive</button>
+          </div>
+        </div>
+        <section class="invoice-summary-grid">
+          <article class="stat-card"><span class="stat-label">Archived invoices</span><strong class="stat-value" id="invoice-total">0</strong></article>
+          <article class="stat-card"><span class="stat-label">Archived revenue</span><strong class="stat-value" id="invoice-revenue">£0.00</strong></article>
+          <article class="stat-card"><span class="stat-label">Outstanding</span><strong class="stat-value" id="invoice-outstanding">£0.00</strong></article>
+          <article class="stat-card"><span class="stat-label">Pro bono</span><strong class="stat-value" id="invoice-pro-bono">0</strong></article>
+        </section>
+        <div class="invoice-filters admin-invoice-filters">
+          <label>Search<input id="admin-invoice-search" type="search" placeholder="Invoice, client or commission"></label>
+          <label>Status<select id="admin-invoice-status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="pro_bono">Pro bono</option><option value="refunded">Refunded</option><option value="cancelled">Cancelled</option><option value="failed">Failed</option></select></label>
+          <label>From<input id="admin-invoice-from" type="date"></label>
+          <label>To<input id="admin-invoice-to" type="date"></label>
+          <label>Sort<select id="admin-invoice-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+        </div>
+        <div class="invoice-list" id="admin-invoice-list"><p class="notice">Loading invoice archive…</p></div>
+      </section>
+
       <section class="panel" data-section="files" hidden>
         <div class="panel-header">
           <div><h2>Secure project files</h2><p class="commission-meta">Upload client deliverables, references, or admin-only files.</p></div>
@@ -163,6 +190,7 @@
           </select>
         </label>
         <label id="payment-amount-label">Amount in GBP (£)<input name="amount" id="payment-amount" type="number" min="0.50" max="100000" step="0.01" placeholder="150.00" required></label>
+        <label>Due date (optional)<input name="dueDate" type="date"></label>
         <label>Description (optional)<textarea name="description" maxlength="300" placeholder="Deposit, final balance, milestone payment…"></textarea></label>
         <button class="button" type="submit" id="payment-submit">Create invoice</button>
       </form>
