@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindUser(user);
   bindTabs();
   document.getElementById("payment-form")?.addEventListener("submit", createPaymentRequest);
+  document.getElementById("payment-billing-type")?.addEventListener("change", updateBillingFields);
+  updateBillingFields();
   document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => document.getElementById(button.dataset.openDialog)?.showModal()));
   document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog")?.close()));
   await Promise.all([loadCommissions(), loadReviews(), loadPayments()]);
@@ -274,20 +276,75 @@ function renderPayments() {
       </div>
       <div class="payment-amount">${formatMoney(payment.amount, payment.currency)}</div>
       ${payment.description ? `<p class="commission-description">${escapeHtml(payment.description)}</p>` : ""}
-      ${payment.paidAt ? `<div class="commission-meta">Paid ${formatDate(payment.paidAt)}</div>` : ""}
-      ${payment.status === "pending" ? '<div class="card-actions"><button class="button small danger" data-cancel-payment>Cancel request</button></div>' : ""}
+      <div class="commission-meta">Invoice ${escapeHtml(payment.invoiceNumber || "Pending number")}</div>
+      ${payment.paidAt && payment.status !== "pro_bono" ? `<div class="commission-meta">Paid ${formatDate(payment.paidAt)}</div>` : ""}
+      <div class="card-actions">
+        <button class="button small secondary" data-invoice-id="${payment._id}">Download invoice PDF</button>
+        ${payment.status === "pending" ? '<button class="button small danger" data-cancel-payment>Cancel request</button>' : ""}
+      </div>
     </article>`).join("");
   list.querySelectorAll("[data-cancel-payment]").forEach((button) => button.addEventListener("click", () => cancelPayment(button)));
+  list.querySelectorAll("[data-invoice-id]").forEach((button) => button.addEventListener("click", () => downloadInvoice(button)));
 }
 
 async function createPaymentRequest(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form));
+  const endpoint = data.billingType === "pro_bono" ? "/api/payments/pro-bono" : "/api/payments";
+  if (data.billingType === "pro_bono") delete data.amount;
+  delete data.billingType;
+
   try {
-    await XDevsAuth.apiFetch("/api/payments", { method: "POST", body: JSON.stringify(data) });
-    form.reset(); form.closest("dialog").close(); await loadPayments();
+    await XDevsAuth.apiFetch(endpoint, { method: "POST", body: JSON.stringify(data) });
+    form.reset();
+    updateBillingFields();
+    form.closest("dialog").close();
+    await loadPayments();
   } catch (error) { alert(error.message); }
+}
+
+function updateBillingFields() {
+  const type = document.getElementById("payment-billing-type")?.value || "paid";
+  const amount = document.getElementById("payment-amount");
+  const label = document.getElementById("payment-amount-label");
+  if (!amount || !label) return;
+  const proBono = type === "pro_bono";
+  amount.disabled = proBono;
+  amount.required = !proBono;
+  label.hidden = proBono;
+}
+
+async function downloadInvoice(button) {
+  const original = button.textContent;
+  button.disabled = true;
+  button.textContent = "Generating PDF…";
+  try {
+    const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/api/payments/${button.dataset.invoiceId}/invoice`, {
+      headers: { Authorization: `Bearer ${XDevsAuth.getToken()}` }
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.message || "Could not generate invoice.");
+    }
+    const blob = await response.blob();
+    const disposition = response.headers.get("content-disposition") || "";
+    const match = disposition.match(/filename="([^"]+)"/);
+    const filename = match?.[1] || "XDevs-Invoice.pdf";
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = original;
+  }
 }
 
 async function cancelPayment(button) {

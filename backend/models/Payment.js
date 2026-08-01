@@ -17,7 +17,7 @@ const paymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
-      min: 50
+      min: 0
     },
     currency: {
       type: String,
@@ -32,9 +32,19 @@ const paymentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed", "cancelled", "refunded"],
+      enum: ["pending", "paid", "failed", "cancelled", "refunded", "pro_bono"],
       default: "pending",
       index: true
+    },
+    invoiceNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
+    invoiceIssuedAt: {
+      type: Date,
+      default: Date.now
     },
     stripeSessionId: {
       type: String,

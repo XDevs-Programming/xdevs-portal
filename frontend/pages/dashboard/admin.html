@@ -103,7 +103,7 @@
       <section class="panel" data-section="payments" hidden>
         <div class="panel-header">
           <div><h2>Payments</h2><p class="commission-meta">Create and monitor secure Stripe payment requests.</p></div>
-          <button class="button" type="button" data-open-dialog="payment-dialog">Request payment</button>
+          <button class="button" type="button" data-open-dialog="payment-dialog">Create invoice</button>
         </div>
         <div class="payment-list" id="admin-payment-list"><p class="notice">Loading payments…</p></div>
       </section>
@@ -128,12 +128,18 @@
 
   <dialog id="payment-dialog">
     <div class="modal-content">
-      <div class="modal-header"><div><h2>Request payment</h2><p class="commission-meta">The amount is securely stored on the server.</p></div><button class="icon-button" type="button" data-close-dialog>×</button></div>
+      <div class="modal-header"><div><h2>Create invoice</h2><p class="commission-meta">Create a paid invoice or mark the commission as pro bono.</p></div><button class="icon-button" type="button" data-close-dialog>×</button></div>
       <form class="form-grid" id="payment-form">
         <label>Commission<select name="commissionId" id="payment-commission" required></select></label>
-        <label>Amount in GBP (£)<input name="amount" type="number" min="0.50" max="100000" step="0.01" placeholder="150.00" required></label>
+        <label>Billing type
+          <select name="billingType" id="payment-billing-type" required>
+            <option value="paid">Paid commission</option>
+            <option value="pro_bono">Pro bono (free)</option>
+          </select>
+        </label>
+        <label id="payment-amount-label">Amount in GBP (£)<input name="amount" id="payment-amount" type="number" min="0.50" max="100000" step="0.01" placeholder="150.00" required></label>
         <label>Description (optional)<textarea name="description" maxlength="300" placeholder="Deposit, final balance, milestone payment…"></textarea></label>
-        <button class="button" type="submit">Create payment request</button>
+        <button class="button" type="submit" id="payment-submit">Create invoice</button>
       </form>
     </div>
   </dialog>

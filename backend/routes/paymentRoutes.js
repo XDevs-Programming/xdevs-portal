@@ -7,6 +7,8 @@ const router = express.Router();
 router.get("/mine", protect, controller.getMyPayments);
 router.get("/", protect, requireRole("admin"), controller.getAllPayments);
 router.post("/", protect, requireRole("admin"), controller.createPaymentRequest);
+router.post("/pro-bono", protect, requireRole("admin"), controller.createProBonoInvoice);
+router.get("/:id/invoice", protect, controller.downloadInvoice);
 router.post("/:id/checkout", protect, controller.createCheckoutSession);
 router.patch(
   "/:id/cancel",
