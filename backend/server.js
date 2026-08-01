@@ -12,6 +12,7 @@ const authRoutes = require("./routes/authRoutes");
 const commissionRoutes = require("./routes/commissionRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 const { stripeWebhook } = require("./controllers/paymentController");
 const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
@@ -28,7 +29,11 @@ const required = [
   "GOOGLE_CLIENT_SECRET",
   "GOOGLE_REDIRECT_URI",
   "STRIPE_SECRET_KEY",
-  "STRIPE_WEBHOOK_SECRET"
+  "STRIPE_WEBHOOK_SECRET",
+  "STORAGE_ENDPOINT",
+  "STORAGE_BUCKET",
+  "STORAGE_ACCESS_KEY_ID",
+  "STORAGE_SECRET_ACCESS_KEY"
 ];
 
 const missing = required.filter((name) => !process.env[name]);
@@ -104,6 +109,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/commissions", commissionRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/files", fileRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

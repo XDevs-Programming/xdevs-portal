@@ -20,6 +20,7 @@
       <nav class="sidebar-nav">
         <button class="sidebar-link active" type="button">Overview</button>
         <a class="sidebar-link" href="#payments">Payments</a>
+        <a class="sidebar-link" href="#files">Files</a>
         <button
           class="sidebar-link"
           type="button"
@@ -112,6 +113,23 @@
         <div class="commission-list" id="commission-list">
           <p class="notice">Loading commissions…</p>
         </div>
+      </section>
+
+      <section class="panel" id="files">
+        <div class="panel-header">
+          <div><h2>Secure project files</h2><p class="commission-meta">Upload reference material and download files shared by XDevs.</p></div>
+        </div>
+        <div class="file-toolbar">
+          <label>Commission
+            <select id="client-file-commission"><option value="">Choose a commission</option></select>
+          </label>
+          <label class="file-picker">Choose file
+            <input id="client-file-input" type="file">
+          </label>
+          <button class="button" id="client-file-upload" type="button">Upload securely</button>
+        </div>
+        <div class="upload-progress" id="client-upload-progress" hidden><span></span></div>
+        <div class="file-list" id="client-file-list"><p class="notice">Choose a commission to view files.</p></div>
       </section>
 
       <section class="panel" id="payments">

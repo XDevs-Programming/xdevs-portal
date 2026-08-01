@@ -27,6 +27,7 @@
         </button>
 
         <button class="sidebar-link" type="button" data-view="payments">Payments</button>
+        <button class="sidebar-link" type="button" data-view="files">Files</button>
 
         <button
           class="sidebar-link"
@@ -106,6 +107,30 @@
           <button class="button" type="button" data-open-dialog="payment-dialog">Create invoice</button>
         </div>
         <div class="payment-list" id="admin-payment-list"><p class="notice">Loading payments…</p></div>
+      </section>
+
+      <section class="panel" data-section="files" hidden>
+        <div class="panel-header">
+          <div><h2>Secure project files</h2><p class="commission-meta">Upload client deliverables, references, or admin-only files.</p></div>
+        </div>
+        <div class="file-toolbar admin-file-toolbar">
+          <label>Commission
+            <select id="admin-file-commission"><option value="">Choose a commission</option></select>
+          </label>
+          <label>Category
+            <select id="admin-file-category">
+              <option value="reference">Reference</option>
+              <option value="deliverable">Deliverable</option>
+              <option value="internal">Internal (admin only)</option>
+            </select>
+          </label>
+          <label class="file-picker">Choose file
+            <input id="admin-file-input" type="file">
+          </label>
+          <button class="button" id="admin-file-upload" type="button">Upload securely</button>
+        </div>
+        <div class="upload-progress" id="admin-upload-progress" hidden><span></span></div>
+        <div class="file-list" id="admin-file-list"><p class="notice">Choose a commission to view files.</p></div>
       </section>
 
       <section class="panel" data-section="reviews" hidden>

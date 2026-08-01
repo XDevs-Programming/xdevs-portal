@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindForms();
   showPaymentReturnMessage();
   await Promise.all([loadCommissions(), loadPayments()]);
+  bindClientFiles();
 });
 
 let clientCommissions = [];
@@ -63,6 +64,7 @@ async function loadCommissions() {
     renderCommissions();
     updateStats();
     populateReviewOptions();
+    populateClientFileCommissions();
   } catch (error) {
     list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
   }
@@ -208,3 +210,131 @@ function setText(id, value) { const element = document.getElementById(id); if (e
 function formatDate(value) { return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(value)); }
 function formatMoney(pence, currency = "gbp") { return new Intl.NumberFormat("en-GB", { style: "currency", currency: currency.toUpperCase() }).format((Number(pence) || 0) / 100); }
 function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+
+
+function bindClientFiles() {
+  const select = document.getElementById("client-file-commission");
+  select?.addEventListener("change", loadClientFiles);
+  document.getElementById("client-file-upload")?.addEventListener("click", uploadClientFile);
+}
+
+function populateClientFileCommissions() {
+  const select = document.getElementById("client-file-commission");
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = '<option value="">Choose a commission</option>' + clientCommissions
+    .filter((item) => item.status !== "Rejected")
+    .map((item) => `<option value="${item._id}">${escapeHtml(item.title)}</option>`).join("");
+  select.value = current;
+}
+
+async function loadClientFiles() {
+  const commissionId = document.getElementById("client-file-commission")?.value;
+  const list = document.getElementById("client-file-list");
+  if (!commissionId) {
+    list.innerHTML = '<p class="notice">Choose a commission to view files.</p>';
+    return;
+  }
+  try {
+    const result = await XDevsAuth.apiFetch(`/api/files/commission/${commissionId}`);
+    renderClientFiles(result.files);
+  } catch (error) { list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`; }
+}
+
+function renderClientFiles(files) {
+  const list = document.getElementById("client-file-list");
+  if (!files.length) {
+    list.innerHTML = '<p class="notice">No files have been shared for this commission.</p>';
+    return;
+  }
+  list.innerHTML = files.map((file) => `
+    <article class="file-card">
+      <div class="file-details">
+        <div class="file-name">${escapeHtml(file.originalName)}</div>
+        <div class="file-badges">
+          <span class="file-badge">${escapeHtml(file.category)}</span>
+          <span class="file-badge">v${file.version}</span>
+          <span class="file-badge">${formatFileSize(file.size)}</span>
+          <span class="file-badge">Uploaded by ${escapeHtml(file.uploadedBy?.username || "User")}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="button small" data-file-download="${file._id}">Download</button>
+        ${file.uploadedBy?._id === JSON.parse(localStorage.getItem("xdevs_user") || "{}").id ? `<button class="button small danger" data-file-delete="${file._id}">Delete</button>` : ""}
+      </div>
+    </article>`).join("");
+  list.querySelectorAll("[data-file-download]").forEach((button) => button.addEventListener("click", () => openSecureDownload(button.dataset.fileDownload)));
+  list.querySelectorAll("[data-file-delete]").forEach((button) => button.addEventListener("click", () => deleteClientFile(button.dataset.fileDelete)));
+}
+
+async function uploadClientFile() {
+  const button = document.getElementById("client-file-upload");
+  button.disabled = true;
+  try {
+    await secureUpload({
+      commissionId: document.getElementById("client-file-commission").value,
+      file: document.getElementById("client-file-input").files[0],
+      category: "reference",
+      progressElement: document.getElementById("client-upload-progress")
+    });
+    document.getElementById("client-file-input").value = "";
+    await loadClientFiles();
+  } catch (error) { alert(error.message); }
+  finally { button.disabled = false; }
+}
+
+async function deleteClientFile(id) {
+  if (!confirm("Delete this file permanently?")) return;
+  try {
+    await XDevsAuth.apiFetch(`/api/files/${id}`, { method: "DELETE" });
+    await loadClientFiles();
+  } catch (error) { alert(error.message); }
+}
+
+function formatFileSize(bytes) {
+  const value = Number(bytes) || 0;
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 ** 2) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / 1024 ** 2).toFixed(1)} MB`;
+}
+
+async function secureUpload({ commissionId, file, category, progressElement }) {
+  if (!commissionId) throw new Error("Choose a commission first.");
+  if (!file) throw new Error("Choose a file first.");
+
+  const request = await XDevsAuth.apiFetch("/api/files/request-upload", {
+    method: "POST",
+    body: JSON.stringify({
+      commissionId,
+      originalName: file.name,
+      mimeType: file.type || "application/octet-stream",
+      size: file.size,
+      category
+    })
+  });
+
+  progressElement.hidden = false;
+  const bar = progressElement.querySelector("span");
+  bar.style.width = "0%";
+
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", request.uploadUrl);
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable) bar.style.width = `${Math.round((event.loaded / event.total) * 100)}%`;
+    });
+    xhr.addEventListener("load", () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Storage upload failed.")));
+    xhr.addEventListener("error", () => reject(new Error("Storage upload failed.")));
+    xhr.send(file);
+  });
+
+  await XDevsAuth.apiFetch(`/api/files/${request.file.id}/complete`, { method: "POST" });
+  bar.style.width = "100%";
+  setTimeout(() => { progressElement.hidden = true; bar.style.width = "0%"; }, 700);
+}
+
+async function openSecureDownload(fileId) {
+  const result = await XDevsAuth.apiFetch(`/api/files/${fileId}/download`);
+  window.location.assign(result.downloadUrl);
+}
