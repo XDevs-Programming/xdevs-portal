@@ -61,6 +61,17 @@ const commissionSchema = new mongoose.Schema(
       trim: true,
       default: "",
       maxlength: 2000
+    },
+    completion: {
+      completedAt: { type: Date, default: null },
+      summary: { type: String, trim: true, default: "", maxlength: 3000 },
+      clientNotes: { type: String, trim: true, default: "", maxlength: 3000 },
+      youtubeUrl: { type: String, trim: true, default: "", maxlength: 500 },
+      youtubeVideoId: { type: String, trim: true, default: "", maxlength: 32 },
+      technologies: [{ type: String, trim: true, maxlength: 50 }],
+      publicPortfolio: { type: Boolean, default: false },
+      clientVisible: { type: Boolean, default: true },
+      thumbnailUrl: { type: String, trim: true, default: "", maxlength: 800 }
     }
   },
   { timestamps: true }

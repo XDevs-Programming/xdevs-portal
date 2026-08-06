@@ -3,11 +3,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!user) return;
 
   bindSidebar();
+  bindClientTabs();
+  bindClientNotifications();
   bindUser(user);
   bindModals();
   bindForms();
   showPaymentReturnMessage();
-  await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive()]);
+  await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive(), loadPastWorks()]);
   bindClientFiles();
   bindClientInvoiceArchive();
 });
@@ -28,7 +30,26 @@ function bindUser(user) {
 
 function bindSidebar() {
   const sidebar = document.querySelector(".sidebar");
-  document.querySelector("[data-sidebar-toggle]")?.addEventListener("click", () => sidebar.classList.toggle("open"));
+  const overlay = document.querySelector("[data-sidebar-overlay]");
+  const open = () => {
+    sidebar?.classList.add("open");
+    overlay?.classList.add("open");
+    document.body.classList.add("sidebar-open");
+  };
+  const close = () => {
+    sidebar?.classList.remove("open");
+    overlay?.classList.remove("open");
+    document.body.classList.remove("sidebar-open");
+  };
+
+  document.querySelector("[data-sidebar-toggle]")?.addEventListener("click", open);
+  document.querySelector("[data-sidebar-close]")?.addEventListener("click", close);
+  overlay?.addEventListener("click", close);
+  document.querySelectorAll(".sidebar-link").forEach((item) => {
+    item.addEventListener("click", () => {
+      if (window.innerWidth <= 980) close();
+    });
+  });
 }
 
 function bindModals() {
@@ -407,4 +428,77 @@ async function downloadInvoiceExport(type, admin) {
     link.download = type === "zip" ? "xdevs-invoice-archive.zip" : "xdevs-invoice-archive.csv";
     document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(link.href);
   } catch (error) { alert(error.message); }
+}
+
+
+function bindClientTabs() {
+  const show = (target) => {
+    document.querySelectorAll("[data-client-section]").forEach((section) => {
+      section.hidden = section.dataset.clientSection !== target;
+    });
+    document.querySelectorAll("[data-client-view]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.clientView === target);
+    });
+  };
+
+  document.querySelectorAll("[data-client-view]").forEach((button) => {
+    button.addEventListener("click", () => show(button.dataset.clientView));
+  });
+
+  const hashTarget = window.location.hash.replace("#", "");
+  if (["overview", "commissions", "past-works", "payments", "invoices", "files"].includes(hashTarget)) {
+    show(hashTarget);
+  } else {
+    show("overview");
+  }
+}
+
+async function loadPastWorks() {
+  const list = document.getElementById("client-past-works");
+  if (!list) return;
+
+  try {
+    const result = await XDevsAuth.apiFetch("/api/commissions/mine/past-works");
+    if (!result.commissions.length) {
+      list.innerHTML = '<p class="notice">Completed projects will automatically appear here.</p>';
+      return;
+    }
+
+    list.innerHTML = result.commissions.map((item) => {
+      const completion = item.completion || {};
+      const video = completion.youtubeVideoId
+        ? `<iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(completion.youtubeVideoId)}" title="${escapeHtml(item.title)} showcase" loading="lazy" allowfullscreen></iframe>`
+        : completion.thumbnailUrl
+        ? `<img src="${escapeAttribute(completion.thumbnailUrl)}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover">`
+        : "";
+
+      return `
+        <article class="past-work-card">
+          ${video}
+          <div class="past-work-content">
+            <span class="status">Completed</span>
+            <h3 style="margin-top:.7rem">${escapeHtml(item.title)}</h3>
+            <div class="commission-meta">${escapeHtml(item.category)} · ${formatDate(completion.completedAt || item.updatedAt)}</div>
+            <p class="commission-description">${escapeHtml(completion.summary || item.description)}</p>
+            ${completion.clientNotes ? `<p class="notice">${escapeHtml(completion.clientNotes)}</p>` : ""}
+            <div class="tech-list">${(completion.technologies || []).map((tech) => `<span class="tech-chip">${escapeHtml(tech)}</span>`).join("")}</div>
+          </div>
+        </article>`;
+    }).join("");
+  } catch (error) {
+    list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function bindClientNotifications() {
+  document.getElementById("enable-notifications")?.addEventListener("click", async () => {
+    try {
+      const permission = await XDevsNotifications.requestPermission();
+      alert(permission === "granted" ? "Desktop alerts enabled." : "Notification permission was not granted.");
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  XDevsNotifications.start(() => {});
 }

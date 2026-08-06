@@ -11,6 +11,7 @@ const connectDatabase = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const commissionRoutes = require("./routes/commissionRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const { stripeWebhook } = require("./controllers/paymentController");
@@ -108,6 +109,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/commissions", commissionRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/files", fileRoutes);
 

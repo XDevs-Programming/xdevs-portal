@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Completed XDevs Programming projects and functionality showcases.">
+  <title>Past Works | XDevs Programming</title>
+  <link rel="icon" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html"><span class="brand-mark">X</span><span>XDevs Programming</span></a>
+      <div class="nav-links open" style="position:static;display:flex;background:none;border:0;padding:0">
+        <a href="index.html">Home</a>
+        <a class="button small" href="pages/auth/login.html">Client portal</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">PAST WORKS</p>
+        <h1 style="font-size:clamp(2.5rem,7vw,5rem);line-height:1">Projects built, delivered and demonstrated.</h1>
+        <p>Only work approved for public display appears here.</p>
+      </div>
+      <div class="past-works-grid" id="public-past-works"><p class="notice">Loading projects…</p></div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script>
+    const escapeHtml = (value) => String(value ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+    fetch(`${APP_CONFIG.API_BASE_URL}/api/commissions/public/past-works`)
+      .then((response) => response.json())
+      .then((data) => {
+        const list = document.getElementById("public-past-works");
+        if (!data.commissions?.length) {
+          list.innerHTML = '<p class="notice">Public project showcases are coming soon.</p>';
+          return;
+        }
+        list.innerHTML = data.commissions.map((item) => {
+          const c = item.completion || {};
+          const media = c.youtubeVideoId
+            ? `<iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.youtubeVideoId)}" title="${escapeHtml(item.title)}" loading="lazy" allowfullscreen></iframe>`
+            : c.thumbnailUrl
+            ? `<img src="${c.thumbnailUrl}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover">`
+            : "";
+          return `<article class="past-work-card">${media}<div class="past-work-content">
+            <span class="status">${escapeHtml(item.category)}</span>
+            <h2 style="margin-top:.7rem">${escapeHtml(item.title)}</h2>
+            <p class="commission-description">${escapeHtml(c.summary || "")}</p>
+            <div class="tech-list">${(c.technologies || []).map((tech) => `<span class="tech-chip">${escapeHtml(tech)}</span>`).join("")}</div>
+          </div></article>`;
+        }).join("");
+      })
+      .catch(() => {
+        document.getElementById("public-past-works").innerHTML =
+          '<p class="notice">Past Works is temporarily unavailable.</p>';
+      });
+  </script>
+</body>
+</html>

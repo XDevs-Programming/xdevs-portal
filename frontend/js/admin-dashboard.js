@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindSidebar();
   bindUser(user);
   bindTabs();
+  bindCompletionForm();
+  bindAdminNotifications();
   document.getElementById("payment-form")?.addEventListener("submit", createPaymentRequest);
   document.getElementById("payment-billing-type")?.addEventListener("change", updateBillingFields);
   updateBillingFields();
@@ -34,11 +36,31 @@ function bindUser(user) {
 }
 
 function bindSidebar() {
-  const sidebar = document.querySelector(".sidebar");
+  bindMobileSidebar();
+}
 
-  document
-    .querySelector("[data-sidebar-toggle]")
-    ?.addEventListener("click", () => sidebar.classList.toggle("open"));
+function bindMobileSidebar() {
+  const sidebar = document.querySelector(".sidebar");
+  const overlay = document.querySelector("[data-sidebar-overlay]");
+  const open = () => {
+    sidebar?.classList.add("open");
+    overlay?.classList.add("open");
+    document.body.classList.add("sidebar-open");
+  };
+  const close = () => {
+    sidebar?.classList.remove("open");
+    overlay?.classList.remove("open");
+    document.body.classList.remove("sidebar-open");
+  };
+
+  document.querySelector("[data-sidebar-toggle]")?.addEventListener("click", open);
+  document.querySelector("[data-sidebar-close]")?.addEventListener("click", close);
+  overlay?.addEventListener("click", close);
+  document.querySelectorAll(".sidebar-link").forEach((item) => {
+    item.addEventListener("click", () => {
+      if (window.innerWidth <= 980) close();
+    });
+  });
 }
 
 function bindTabs() {
@@ -117,6 +139,7 @@ function renderCommissions() {
 
           <div class="card-actions">
             <button class="button small" data-save>Save update</button>
+            <button class="button small secondary" data-complete>Complete & archive</button>
             <button class="button small danger" data-delete>Delete</button>
           </div>
         </article>
@@ -130,6 +153,9 @@ function renderCommissions() {
 
   list.querySelectorAll("[data-delete]").forEach((button) => {
     button.addEventListener("click", () => deleteCommission(button));
+  });
+  list.querySelectorAll("[data-complete]").forEach((button) => {
+    button.addEventListener("click", () => openCompletionDialog(button));
   });
 }
 
@@ -653,4 +679,129 @@ async function downloadAdminInvoiceExport(type) {
     link.download = type === "zip" ? "xdevs-invoice-archive.zip" : "xdevs-invoice-archive.csv";
     document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
   } catch (error) { alert(error.message); }
+}
+
+
+function openCompletionDialog(button) {
+  const card = button.closest("[data-commission-id]");
+  const commission = allCommissions.find((item) => item._id === card.dataset.commissionId);
+  const dialog = document.getElementById("completion-dialog");
+  const form = document.getElementById("completion-form");
+  if (!commission || !dialog || !form) return;
+
+  form.reset();
+  form.commissionId.value = commission._id;
+  form.summary.value = commission.completion?.summary || "";
+  form.clientNotes.value = commission.completion?.clientNotes || "";
+  form.youtubeUrl.value = commission.completion?.youtubeUrl || "";
+  form.technologies.value = (commission.completion?.technologies || []).join(", ");
+  form.thumbnailUrl.value = commission.completion?.thumbnailUrl || "";
+  form.clientVisible.checked = commission.completion?.clientVisible !== false;
+  form.publicPortfolio.checked = commission.completion?.publicPortfolio === true;
+  dialog.showModal();
+}
+
+function bindCompletionForm() {
+  document.getElementById("completion-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const id = form.commissionId.value;
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = "Archiving…";
+
+    try {
+      await XDevsAuth.apiFetch(`/api/commissions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          status: "Completed",
+          completion: {
+            summary: form.summary.value.trim(),
+            clientNotes: form.clientNotes.value.trim(),
+            youtubeUrl: form.youtubeUrl.value.trim(),
+            technologies: form.technologies.value.split(",").map((item) => item.trim()).filter(Boolean),
+            thumbnailUrl: form.thumbnailUrl.value.trim(),
+            clientVisible: form.clientVisible.checked,
+            publicPortfolio: form.publicPortfolio.checked
+          }
+        })
+      });
+
+      form.closest("dialog").close();
+      await loadCommissions();
+      showToast("Commission completed and added to Past Works.");
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      button.disabled = false;
+      button.textContent = "Complete and archive";
+    }
+  });
+}
+
+function bindAdminNotifications() {
+  document.getElementById("enable-notifications")?.addEventListener("click", async () => {
+    try {
+      const permission = await XDevsNotifications.requestPermission();
+      showToast(permission === "granted" ? "Desktop alerts enabled." : "Notification permission was not granted.");
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  document.getElementById("mark-all-notifications-read")?.addEventListener("click", () => {
+    XDevsNotifications.markAllRead();
+  });
+
+  XDevsNotifications.start(renderAdminNotifications);
+}
+
+function renderAdminNotifications(result) {
+  const badge = document.getElementById("sidebar-notification-badge");
+  if (badge) {
+    badge.hidden = result.unread === 0;
+    badge.textContent = result.unread;
+  }
+
+  const list = document.getElementById("admin-notification-list");
+  const activity = document.getElementById("admin-activity-feed");
+  const html = result.notifications.length
+    ? result.notifications.map((item) => `
+        <article class="notification-item ${item.read ? "" : "unread"}" data-notification-id="${item._id}" data-notification-link="${escapeAttribute(item.link || "")}">
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(item.message)}</p>
+          <div class="notification-time">${formatDateTime(item.createdAt)}</div>
+        </article>`).join("")
+    : '<p class="notice">No notifications yet.</p>';
+
+  if (list) list.innerHTML = html;
+  if (activity) activity.innerHTML = html;
+
+  document.querySelectorAll("[data-notification-id]").forEach((item) => {
+    item.addEventListener("click", async () => {
+      await XDevsNotifications.markRead(item.dataset.notificationId);
+      if (item.dataset.notificationLink) window.location.assign(item.dataset.notificationLink);
+    });
+  });
+}
+
+function showToast(message) {
+  let stack = document.querySelector(".toast-stack");
+  if (!stack) {
+    stack = document.createElement("div");
+    stack.className = "toast-stack";
+    document.body.appendChild(stack);
+  }
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  stack.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+function formatDateTime(value) {
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(new Date(value));
 }

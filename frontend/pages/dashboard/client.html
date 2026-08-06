@@ -11,32 +11,25 @@
 
 <body>
   <div class="dashboard-shell">
+    <div class="dashboard-overlay" data-sidebar-overlay></div>
     <aside class="sidebar">
-      <a class="sidebar-brand" href="../../index.html">
-        <span>X</span>
-        <span>XDevs Portal</span>
-      </a>
+      <div class="sidebar-brand">
+        <a href="../../index.html" style="display:flex;align-items:center;gap:.7rem;text-decoration:none;color:inherit">
+          <span>X</span><span>XDevs Portal</span>
+        </a>
+        <button class="sidebar-close" type="button" data-sidebar-close aria-label="Close menu">×</button>
+      </div>
 
       <nav class="sidebar-nav">
-        <button class="sidebar-link active" type="button">Overview</button>
-        <a class="sidebar-link" href="#payments">Payments</a>
-        <a class="sidebar-link" href="#invoices">Invoices</a>
-        <a class="sidebar-link" href="#files">Files</a>
-        <button
-          class="sidebar-link"
-          type="button"
-          data-open-dialog="commission-dialog"
-        >
-          New commission
-        </button>
-        <button
-          class="sidebar-link"
-          type="button"
-          data-open-dialog="review-dialog"
-        >
-          Leave a review
-        </button>
-        <a class="sidebar-link" href="../../index.html">Public website</a>
+        <button class="sidebar-link active" type="button" data-client-view="overview">Overview</button>
+        <button class="sidebar-link" type="button" data-client-view="commissions">Commissions</button>
+        <button class="sidebar-link" type="button" data-client-view="past-works">Past Works</button>
+        <button class="sidebar-link" type="button" data-client-view="payments">Payments</button>
+        <button class="sidebar-link" type="button" data-client-view="invoices">Invoices</button>
+        <button class="sidebar-link" type="button" data-client-view="files">Files</button>
+        <button class="sidebar-link" type="button" data-open-dialog="commission-dialog">New commission</button>
+        <button class="sidebar-link" type="button" data-open-dialog="review-dialog">Leave a review</button>
+        <a class="sidebar-link" href="../../past-works.html">Public Past Works</a>
       </nav>
 
       <div class="sidebar-footer">
@@ -62,13 +55,14 @@
         </div>
 
         <div class="user-summary">
+          <button class="button secondary small" id="enable-notifications" type="button">Enable alerts</button>
           <img class="user-avatar" data-user-avatar alt="">
         </div>
       </header>
 
       <div id="payment-banner" class="notice payment-banner" hidden></div>
 
-      <section class="stat-grid">
+      <section class="stat-grid page-section" data-client-section="overview">
         <article class="stat-card">
           <span class="stat-label">Total commissions</span>
           <strong class="stat-value" id="stat-total">0</strong>
@@ -95,7 +89,7 @@
         </article>
       </section>
 
-      <section class="panel">
+      <section class="panel page-section" data-client-section="commissions" hidden>
         <div class="panel-header">
           <div>
             <h2>Your commissions</h2>
@@ -116,7 +110,15 @@
         </div>
       </section>
 
-      <section class="panel" id="files">
+
+      <section class="panel page-section" data-client-section="past-works" hidden>
+        <div class="panel-header">
+          <div><h2>Past Works</h2><p class="commission-meta">Completed projects, deliverables, invoices and video showcases.</p></div>
+        </div>
+        <div class="past-works-grid" id="client-past-works"><p class="notice">Loading completed work…</p></div>
+      </section>
+
+      <section class="panel page-section" id="files" data-client-section="files" hidden>
         <div class="panel-header">
           <div><h2>Secure project files</h2><p class="commission-meta">Upload reference material and download files shared by XDevs.</p></div>
         </div>
@@ -135,7 +137,7 @@
 
 
 
-      <section class="panel" id="invoices">
+      <section class="panel page-section" id="invoices" data-client-section="invoices" hidden>
         <div class="panel-header">
           <div><h2>Invoice archive</h2><p class="commission-meta">Search, filter and download every invoice issued to your account.</p></div>
           <div class="card-actions">
@@ -151,7 +153,7 @@
         <div class="invoice-list" id="client-invoice-list"><p class="notice">Loading invoice archive…</p></div>
       </section>
 
-      <section class="panel" id="payments">
+      <section class="panel page-section" id="payments" data-client-section="payments" hidden>
         <div class="panel-header">
           <div><h2>Payments</h2><p class="commission-meta">Secure payment requests from XDevs Programming.</p></div>
         </div>
@@ -256,6 +258,7 @@
 
   <script src="../../js/config.js"></script>
   <script src="../../js/auth.js"></script>
+  <script src="../../js/notifications.js"></script>
   <script src="../../js/client-dashboard.js"></script>
 </body>
 </html>

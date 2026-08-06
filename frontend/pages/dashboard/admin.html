@@ -11,24 +11,23 @@
 
 <body>
   <div class="dashboard-shell">
+    <div class="dashboard-overlay" data-sidebar-overlay></div>
     <aside class="sidebar">
-      <a class="sidebar-brand" href="../../index.html">
-        <span>X</span>
-        <span>XDevs Admin</span>
-      </a>
+      <div class="sidebar-brand">
+        <a href="../../index.html" style="display:flex;align-items:center;gap:.7rem;text-decoration:none;color:inherit">
+          <span>X</span><span>XDevs Admin</span>
+        </a>
+        <button class="sidebar-close" type="button" data-sidebar-close aria-label="Close menu">×</button>
+      </div>
 
       <nav class="sidebar-nav">
-        <button
-          class="sidebar-link active"
-          type="button"
-          data-view="commissions"
-        >
-          Commissions
-        </button>
+        <button class="sidebar-link active" type="button" data-view="overview">Overview</button>
+        <button class="sidebar-link" type="button" data-view="commissions">Commissions</button>
 
         <button class="sidebar-link" type="button" data-view="payments">Payments</button>
         <button class="sidebar-link" type="button" data-view="invoices">Invoice archive</button>
         <button class="sidebar-link" type="button" data-view="files">Files</button>
+        <button class="sidebar-link" type="button" data-view="notifications">Notifications <span class="notification-badge" id="sidebar-notification-badge" hidden>0</span></button>
 
         <button
           class="sidebar-link"
@@ -63,7 +62,10 @@
           </div>
         </div>
 
-        <img class="user-avatar" data-user-avatar alt="">
+        <div class="topbar-actions">
+          <button class="button secondary small notification-button" id="enable-notifications" type="button">Enable alerts</button>
+          <img class="user-avatar" data-user-avatar alt="">
+        </div>
       </header>
 
       <section class="stat-grid">
@@ -88,7 +90,13 @@
         <article class="stat-card"><span class="stat-label">Paid payments</span><strong class="stat-value" id="stat-payments">0</strong></article>
       </section>
 
-      <section class="panel" data-section="commissions">
+
+      <section class="panel page-section" data-section="overview">
+        <div class="panel-header"><div><h2>Business overview</h2><p class="commission-meta">A live snapshot of your portal.</p></div></div>
+        <div class="activity-feed" id="admin-activity-feed"><p class="notice">Loading recent activity…</p></div>
+      </section>
+
+      <section class="panel page-section" data-section="commissions" hidden>
         <div class="panel-header">
           <div>
             <h2>All commissions</h2>
@@ -102,7 +110,7 @@
       </section>
 
 
-      <section class="panel" data-section="payments" hidden>
+      <section class="panel page-section" data-section="payments" hidden>
         <div class="panel-header">
           <div><h2>Payments</h2><p class="commission-meta">Create and monitor secure Stripe payment requests.</p></div>
           <button class="button" type="button" data-open-dialog="payment-dialog">Create invoice</button>
@@ -112,7 +120,7 @@
 
 
 
-      <section class="panel" data-section="invoices" hidden>
+      <section class="panel page-section" data-section="invoices" hidden>
         <div class="panel-header">
           <div><h2>Invoice archive</h2><p class="commission-meta">Permanent records for paid, outstanding, refunded, cancelled and pro bono invoices.</p></div>
           <div class="card-actions">
@@ -136,7 +144,7 @@
         <div class="invoice-list" id="admin-invoice-list"><p class="notice">Loading invoice archive…</p></div>
       </section>
 
-      <section class="panel" data-section="files" hidden>
+      <section class="panel page-section" data-section="files" hidden>
         <div class="panel-header">
           <div><h2>Secure project files</h2><p class="commission-meta">Upload client deliverables, references, or admin-only files.</p></div>
         </div>
@@ -160,7 +168,7 @@
         <div class="file-list" id="admin-file-list"><p class="notice">Choose a commission to view files.</p></div>
       </section>
 
-      <section class="panel" data-section="reviews" hidden>
+      <section class="panel page-section" data-section="reviews" hidden>
         <div class="panel-header">
           <div>
             <h2>Review moderation</h2>
@@ -174,6 +182,15 @@
           <p class="notice">Loading reviews…</p>
         </div>
       </section>
+
+      <section class="panel page-section" data-section="notifications" hidden>
+        <div class="panel-header">
+          <div><h2>Notification centre</h2><p class="commission-meta">New commissions and important portal activity.</p></div>
+          <button class="button secondary small" id="mark-all-notifications-read" type="button">Mark all read</button>
+        </div>
+        <div class="notification-list" id="admin-notification-list"><p class="notice">Loading notifications…</p></div>
+      </section>
+
     </main>
   </div>
 
@@ -197,8 +214,30 @@
     </div>
   </dialog>
 
+
+  <dialog id="completion-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h2>Complete commission</h2><p class="commission-meta">Create the client’s permanent Past Works entry.</p></div>
+        <button class="icon-button" type="button" data-close-dialog>×</button>
+      </div>
+      <form class="form-grid" id="completion-form">
+        <input type="hidden" name="commissionId" id="completion-commission-id">
+        <label>Project summary<textarea name="summary" maxlength="3000" required></textarea></label>
+        <label>Client completion notes<textarea name="clientNotes" maxlength="3000"></textarea></label>
+        <label>YouTube showcase URL<input name="youtubeUrl" type="url" placeholder="https://youtu.be/..."></label>
+        <label>Technologies used<input name="technologies" placeholder="Node.js, Discord.js, MongoDB"></label>
+        <label>Thumbnail URL (optional)<input name="thumbnailUrl" type="url"></label>
+        <label><span><input name="clientVisible" type="checkbox" checked style="width:auto"> Show in client Past Works</span></label>
+        <label><span><input name="publicPortfolio" type="checkbox" style="width:auto"> Publish on public Past Works page</span></label>
+        <button class="button" type="submit">Complete and archive</button>
+      </form>
+    </div>
+  </dialog>
+
   <script src="../../js/config.js"></script>
   <script src="../../js/auth.js"></script>
+  <script src="../../js/notifications.js"></script>
   <script src="../../js/admin-dashboard.js"></script>
 </body>
 </html>
