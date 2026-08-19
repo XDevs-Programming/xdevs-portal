@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindTabs();
   bindCompletionForm();
   bindAdminNotifications();
+  await XDevsChat.init("admin");
   document.getElementById("payment-form")?.addEventListener("submit", createPaymentRequest);
   document.getElementById("payment-billing-type")?.addEventListener("change", updateBillingFields);
   updateBillingFields();
@@ -64,19 +65,27 @@ function bindMobileSidebar() {
 }
 
 function bindTabs() {
+  const show = (target) => {
+    document.querySelectorAll("[data-view]").forEach((item) => {
+      item.classList.toggle("active", item.dataset.view === target);
+    });
+
+    document.querySelectorAll("[data-section]").forEach((section) => {
+      section.hidden = section.dataset.section !== target;
+    });
+  };
+
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.view;
-
-      document.querySelectorAll("[data-view]").forEach((item) => {
-        item.classList.toggle("active", item === button);
-      });
-
-      document.querySelectorAll("[data-section]").forEach((section) => {
-        section.hidden = section.dataset.section !== target;
-      });
+      show(target);
+      history.replaceState({}, "", `#${target}`);
     });
   });
+
+  const hashTarget = window.location.hash.replace("#", "");
+  const valid = ["overview", "commissions", "payments", "invoices", "files", "chat", "notifications", "reviews"];
+  show(valid.includes(hashTarget) ? hashTarget : "overview");
 }
 
 async function loadCommissions() {

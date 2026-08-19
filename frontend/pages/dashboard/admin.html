@@ -27,6 +27,7 @@
         <button class="sidebar-link" type="button" data-view="payments">Payments</button>
         <button class="sidebar-link" type="button" data-view="invoices">Invoice archive</button>
         <button class="sidebar-link" type="button" data-view="files">Files</button>
+<button class="sidebar-link" type="button" data-view="chat">Live chat <span class="notification-badge chat-unread-badge" data-chat-unread hidden>0</span></button>
         <button class="sidebar-link" type="button" data-view="notifications">Notifications <span class="notification-badge" id="sidebar-notification-badge" hidden>0</span></button>
 
         <button
@@ -94,6 +95,58 @@
       <section class="panel page-section" data-section="overview">
         <div class="panel-header"><div><h2>Business overview</h2><p class="commission-meta">A live snapshot of your portal.</p></div></div>
         <div class="activity-feed" id="admin-activity-feed"><p class="notice">Loading recent activity…</p></div>
+      </section>
+
+
+      <section class="panel page-section" data-section="chat" hidden>
+        <div class="panel-header">
+          <div>
+            <h2>Live chat</h2>
+            <p class="commission-meta">Private conversations with your clients, organised by commission.</p>
+          </div>
+          <span class="chat-connection-status" data-chat-status>Connecting…</span>
+        </div>
+        <div class="chat-layout" data-chat-layout>
+          <aside class="chat-conversations">
+            <div class="chat-list-header">
+              <strong>Client conversations</strong>
+              <button class="button secondary small" type="button" data-chat-refresh>Refresh</button>
+            </div>
+            <div class="chat-conversation-list" data-chat-conversations>
+              <p class="notice">Loading conversations…</p>
+            </div>
+          </aside>
+
+          <section class="chat-window" data-chat-window>
+            <div class="chat-empty" data-chat-empty>
+              <div class="chat-empty-icon">✦</div>
+              <h3>Select a commission</h3>
+              <p>Choose a commission to open its private client chat.</p>
+            </div>
+
+            <div class="chat-active" data-chat-active hidden>
+              <header class="chat-header">
+                <button class="button secondary small chat-back" type="button" data-chat-back>← Conversations</button>
+                <div class="chat-header-main">
+                  <h3 data-chat-title>Commission chat</h3>
+                  <p data-chat-meta>Private conversation</p>
+                </div>
+                <span class="chat-live-dot" title="Live connection"></span>
+              </header>
+
+              <div class="chat-messages" data-chat-messages aria-live="polite"></div>
+              <div class="chat-typing" data-chat-typing hidden></div>
+
+              <form class="chat-composer" data-chat-form>
+                <textarea data-chat-input maxlength="2000" rows="2" placeholder="Write a message…"></textarea>
+                <div class="chat-composer-footer">
+                  <span>Enter to send · Shift + Enter for a new line</span>
+                  <button class="button" type="submit">Send</button>
+                </div>
+              </form>
+            </div>
+          </section>
+        </div>
       </section>
 
       <section class="panel page-section" data-section="commissions" hidden>
@@ -237,7 +290,9 @@
 
   <script src="../../js/config.js"></script>
   <script src="../../js/auth.js"></script>
+  <script src="https://xdevs-portal.onrender.com/socket.io/socket.io.js"></script>
   <script src="../../js/notifications.js"></script>
+  <script src="../../js/chat.js"></script>
   <script src="../../js/admin-dashboard.js"></script>
 </body>
 </html>

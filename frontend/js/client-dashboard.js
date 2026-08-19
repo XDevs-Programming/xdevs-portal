@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindModals();
   bindForms();
   showPaymentReturnMessage();
+  await XDevsChat.init("client");
   await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive(), loadPastWorks()]);
   bindClientFiles();
   bindClientInvoiceArchive();
@@ -446,7 +447,7 @@ function bindClientTabs() {
   });
 
   const hashTarget = window.location.hash.replace("#", "");
-  if (["overview", "commissions", "past-works", "payments", "invoices", "files"].includes(hashTarget)) {
+  if (["overview", "commissions", "past-works", "payments", "invoices", "files", "chat"].includes(hashTarget)) {
     show(hashTarget);
   } else {
     show("overview");

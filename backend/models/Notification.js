@@ -16,6 +16,7 @@ const notificationSchema = new mongoose.Schema(
         "payment_paid",
         "review_new",
         "file_uploaded",
+        "chat_message",
         "general"
       ],
       default: "general",

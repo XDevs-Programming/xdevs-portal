@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -14,6 +16,8 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const fileRoutes = require("./routes/fileRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const { installChatSocket } = require("./sockets/chatSocket");
 const { stripeWebhook } = require("./controllers/paymentController");
 const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
@@ -45,6 +49,7 @@ if (missing.length) {
 }
 
 const app = express();
+const httpServer = http.createServer(app);
 const port = Number(process.env.PORT) || 3000;
 const production = process.env.NODE_ENV === "production";
 
@@ -54,6 +59,17 @@ const allowedOrigins = process.env.FRONTEND_URL
   .split(",")
   .map((origin) => origin.trim().replace(/\/+$/, ""))
   .filter(Boolean);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST"]
+  },
+  transports: ["websocket", "polling"]
+});
+
+installChatSocket(io);
 
 app.disable("x-powered-by");
 
@@ -112,6 +128,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/files", fileRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -120,7 +137,7 @@ async function start() {
   try {
     await connectDatabase();
 
-    app.listen(port, "0.0.0.0", () => {
+    httpServer.listen(port, "0.0.0.0", () => {
       console.log(`API listening on port ${port}`);
       console.log(`Allowed origins: ${allowedOrigins.join(", ")}`);
     });
