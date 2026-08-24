@@ -503,3 +503,59 @@ function bindClientNotifications() {
 
   XDevsNotifications.start(() => {});
 }
+
+
+/* XDevs V5 mobile sidebar controller */
+(function () {
+  "use strict";
+
+  if (window.XDevsV5Sidebar) return;
+
+  function init() {
+    const sidebar = document.querySelector(".sidebar, .dashboard-sidebar, [data-sidebar]");
+    const toggle = document.querySelector(".mobile-sidebar-toggle, [data-sidebar-toggle]");
+    const overlay = document.querySelector("[data-sidebar-overlay], .dashboard-overlay");
+
+    if (!sidebar || !toggle) return;
+
+    const close = () => {
+      sidebar.classList.remove("open", "active");
+      overlay?.classList.remove("active", "open");
+      document.body.classList.remove("sidebar-open");
+      overlay?.setAttribute("aria-hidden", "true");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+
+    const open = () => {
+      sidebar.classList.add("open");
+      overlay?.classList.add("active");
+      document.body.classList.add("sidebar-open");
+      overlay?.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+    };
+
+    toggle.addEventListener("click", () => {
+      sidebar.classList.contains("open") ? close() : open();
+    });
+
+    overlay?.addEventListener("click", close);
+
+    sidebar.querySelectorAll("a, button").forEach((item) => {
+      item.addEventListener("click", () => {
+        if (window.innerWidth <= 767) close();
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 767) close();
+    });
+
+    window.XDevsV5Sidebar = { open, close };
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

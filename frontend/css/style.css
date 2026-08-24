@@ -404,3 +404,42 @@ a {
     flex-direction: column;
   }
 }
+
+
+
+/* ==========================================================
+   XDEVS V5 — HOMEPAGE NAVIGATION ALIGNMENT
+   ========================================================== */
+.site-header .navbar,
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.menu-toggle,
+.menu-button,
+.nav-menu-button,
+.mobile-menu-button,
+[data-menu-toggle] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: .65rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+@media (min-width: 851px) {
+  .menu-toggle,
+  .menu-button,
+  .nav-menu-button,
+  .mobile-menu-button,
+  [data-menu-toggle] {
+    align-self: center;
+    margin-left: auto;
+  }
+}

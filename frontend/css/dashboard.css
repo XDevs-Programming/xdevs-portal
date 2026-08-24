@@ -1096,3 +1096,472 @@ body {
     line-height: 1.25;
   }
 }
+
+
+
+/* ==========================================================
+   XDEVS V5 — MOBILE / RESPONSIVE HARDENING
+   ========================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+img,
+video,
+iframe,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.dashboard-shell,
+.dashboard-main,
+.dashboard-topbar,
+.panel,
+.stat-grid,
+.stats-grid,
+.content-grid,
+.commission-grid,
+.invoice-summary-grid {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-main {
+  overflow-x: clip;
+}
+
+.dashboard-topbar {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.dashboard-topbar > * {
+  min-width: 0;
+}
+
+.topbar-actions,
+.user-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .45rem;
+  margin-left: auto;
+}
+
+/* Notification controls */
+.notification-button,
+.notification-toggle,
+[data-notifications-toggle],
+#enable-notifications {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 42px;
+  margin: 0;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.notification-button,
+.notification-toggle,
+[data-notifications-toggle] {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+}
+
+.notification-button svg,
+.notification-toggle svg,
+[data-notifications-toggle] svg,
+.notification-button i,
+.notification-toggle i {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+@media (max-width: 767px) {
+  html,
+  body {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .dashboard-shell {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .dashboard-main,
+  main.dashboard-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 12px !important;
+  }
+
+  .dashboard-main > *,
+  .dashboard-main section,
+  .dashboard-main .panel,
+  .dashboard-main .stat-grid,
+  .dashboard-main .stats-grid {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .dashboard-topbar,
+  header.dashboard-topbar {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 0 12px !important;
+    padding: 9px 11px !important;
+  }
+
+  .dashboard-heading {
+    min-width: 0 !important;
+    flex: 1 1 auto;
+  }
+
+  .dashboard-heading h1 {
+    font-size: 1.45rem !important;
+    line-height: 1.15 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-heading p {
+    font-size: .8rem !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .stat-grid,
+  .stats-grid,
+  .content-grid,
+  .commission-grid,
+  .invoice-summary-grid {
+    display: grid !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .7rem !important;
+  }
+
+  .stat-card,
+  .panel,
+  .commission-card,
+  .payment-card,
+  .invoice-card,
+  .file-card,
+  .past-work-card,
+  .notification-item,
+  .review-admin-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .panel {
+    padding: .9rem !important;
+    margin-top: .8rem !important;
+  }
+
+  .panel-header {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: .7rem !important;
+  }
+
+  .panel-header > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .panel-header .button {
+    width: 100% !important;
+  }
+
+  .card-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+
+  .card-actions .button {
+    width: 100% !important;
+  }
+
+  .form-row,
+  .file-toolbar,
+  .admin-file-toolbar,
+  .invoice-filters,
+  .admin-invoice-filters {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .commission-header,
+  .invoice-card-main {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .commission-description,
+  .commission-meta,
+  .file-name,
+  .invoice-card,
+  .notification-item {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* True off-canvas sidebar on phones */
+  .sidebar,
+  .dashboard-sidebar,
+  aside.sidebar,
+  aside.dashboard-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(84vw, 320px) !important;
+    max-width: 320px !important;
+    min-width: 0 !important;
+    height: 100dvh !important;
+    z-index: 1000 !important;
+    transform: translate3d(-110%, 0, 0) !important;
+    transition: transform .22s ease !important;
+    box-shadow: 28px 0 70px rgba(0,0,0,.45);
+  }
+
+  .sidebar.open,
+  .dashboard-sidebar.open,
+  .sidebar.active,
+  .dashboard-sidebar.active,
+  body.sidebar-open .sidebar,
+  body.sidebar-open .dashboard-sidebar {
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  .sidebar-overlay,
+  .dashboard-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999 !important;
+    display: none;
+    background: rgba(0,0,0,.58);
+    backdrop-filter: blur(3px);
+  }
+
+  .sidebar-overlay.active,
+  .sidebar-overlay.open,
+  .dashboard-overlay.active,
+  .dashboard-overlay.open,
+  body.sidebar-open .sidebar-overlay,
+  body.sidebar-open .dashboard-overlay {
+    display: block !important;
+  }
+
+  body.sidebar-open {
+    overflow: hidden !important;
+  }
+
+  .mobile-sidebar-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    flex: 0 0 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Mobile chat containment */
+  .chat-layout,
+  .chat-window,
+  .chat-conversations,
+  .chat-active {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .chat-layout {
+    display: block !important;
+  }
+
+  .chat-message {
+    max-width: 88% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  dialog {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100dvh - 1rem) !important;
+    margin: .5rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .dashboard-main {
+    padding: 9px !important;
+  }
+
+  .dashboard-topbar {
+    padding: 8px 9px !important;
+  }
+
+  .dashboard-heading h1 {
+    font-size: 1.25rem !important;
+  }
+
+  .mobile-sidebar-toggle,
+  .notification-button,
+  .notification-toggle,
+  [data-notifications-toggle] {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    flex-basis: 42px !important;
+  }
+}
+
+
+
+/* ==========================================================
+   XDEVS V5 — UI / UX POLISH
+   ========================================================== */
+:root {
+  --surface-1: rgba(15, 22, 38, .94);
+  --surface-2: rgba(20, 29, 48, .92);
+  --surface-hover: rgba(124, 92, 255, .10);
+  --focus-ring: 0 0 0 3px rgba(124, 92, 255, .25);
+}
+
+.button,
+.sidebar-link,
+.icon-button,
+input,
+select,
+textarea {
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background-color .16s ease,
+    box-shadow .16s ease,
+    opacity .16s ease;
+}
+
+.button:hover,
+.sidebar-link:hover {
+  transform: translateY(-1px);
+}
+
+.button:focus-visible,
+.sidebar-link:focus-visible,
+.icon-button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.stat-card,
+.panel,
+.commission-card,
+.payment-card,
+.invoice-card,
+.file-card,
+.past-work-card,
+.notification-item {
+  border-color: rgba(167,181,222,.13);
+}
+
+.stat-card:hover,
+.commission-card:hover,
+.invoice-card:hover,
+.file-card:hover,
+.past-work-card:hover {
+  border-color: rgba(124,92,255,.28);
+}
+
+.sidebar-link {
+  min-height: 44px;
+}
+
+.status {
+  min-height: 28px;
+  align-items: center;
+}
+
+input,
+textarea,
+select {
+  min-height: 44px;
+}
+
+textarea {
+  min-height: 112px;
+}
+
+.empty-state,
+.notice {
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
