@@ -1565,3 +1565,29 @@ textarea {
     animation-iteration-count: 1 !important;
   }
 }
+
+
+
+.sidebar-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .65rem;
+  padding: .65rem .85rem 0;
+  color: var(--muted);
+  font-size: .68rem;
+}
+
+.sidebar-legal a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidebar-legal a:hover {
+  color: var(--text);
+}
+
+.sidebar-version {
+  padding: .35rem .85rem .15rem;
+  color: var(--muted);
+  font-size: .66rem;
+}

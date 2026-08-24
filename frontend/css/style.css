@@ -443,3 +443,30 @@ a {
     margin-left: auto;
   }
 }
+
+
+
+/* Legal/version footer additions */
+.footer-meta,
+.legal-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem 1rem;
+}
+
+.footer-meta a,
+.legal-footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-meta a:hover,
+.legal-footer-links a:hover {
+  color: var(--text);
+}
+
+.footer-version {
+  color: var(--muted);
+  font-size: .82rem;
+}

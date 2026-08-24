@@ -1,3 +1,7 @@
 /login /pages/auth/login.html 200
 /client /pages/dashboard/client.html 200
 /admin /pages/dashboard/admin.html 200
+
+/privacy /pages/legal/privacy.html 200
+/terms /pages/legal/terms.html 200
+/changelog /changelog.html 200

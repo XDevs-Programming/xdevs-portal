@@ -1,6 +1,6 @@
 {
   "name": "xdevs-portal-api",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Backend API for the XDevs Programming commission portal",
   "main": "server.js",
   "type": "commonjs",

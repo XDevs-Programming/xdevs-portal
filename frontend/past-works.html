@@ -33,7 +33,21 @@
     </div>
   </main>
 
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <span>© <span data-current-year></span> XDevs Programming</span>
+      <div class="footer-meta">
+        <a href="pages/legal/privacy.html">Privacy Policy</a>
+        <a href="pages/legal/terms.html">Terms of Service</a>
+        <a href="changelog.html">Changelog</a>
+        <span class="footer-version" data-app-version></span>
+      </div>
+    </div>
+  </footer>
+
   <script src="js/config.js"></script>
+  <script src="js/version.js"></script>
   <script>
     const escapeHtml = (value) => String(value ?? "")
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")

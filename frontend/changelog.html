@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="What's new in the XDevs Programming client portal.">
+  <title>Changelog | XDevs Programming</title>
+  <link rel="icon" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/legal.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">X</span>
+        <span>XDevs Programming</span>
+      </a>
+      <div class="nav-links open" style="position:static;display:flex;background:none;border:0;padding:0">
+        <a href="index.html">Home</a>
+        <a href="pages/legal/privacy.html">Privacy</a>
+        <a href="pages/legal/terms.html">Terms</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="legal-hero">
+      <div class="container">
+        <p class="eyebrow">PORTAL · RELEASES</p>
+        <h1>What's new</h1>
+        <p class="legal-intro">
+          Major user-facing changes to the XDevs Programming portal are recorded here.
+        </p>
+        <div class="legal-meta">
+          <span class="legal-chip">Current: <span data-app-version style="margin-left:.25rem"></span></span>
+          <span class="legal-chip">Released: <span data-release-date style="margin-left:.25rem"></span></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="container legal-layout">
+      <aside class="legal-toc">
+        <strong>Releases</strong>
+        <a href="#v610">v6.1.0</a>
+        <a href="#v600">v6.0.0</a>
+      </aside>
+
+      <article class="legal-document">
+        <div class="changelog-list">
+          <section class="release-card" id="v610">
+            <div class="release-header">
+              <h2>v6.1.0 — Legal & Transparency</h2>
+              <span>24 August 2026</span>
+            </div>
+            <ul>
+              <li>Added a dedicated Privacy Policy built around the current portal data flow.</li>
+              <li>Added Terms of Service covering commissions, payments, pro bono projects, files, chat, delivery and client responsibilities.</li>
+              <li>Added Terms and Privacy acknowledgement to the OAuth sign-in page.</li>
+              <li>Added a public changelog and visible portal version.</li>
+              <li>Added legal links and version information throughout the website and dashboard sidebars.</li>
+              <li>Added a backend <code>/api/version</code> endpoint for deployment checks.</li>
+            </ul>
+          </section>
+
+          <section class="release-card" id="v600">
+            <div class="release-header">
+              <h2>v6.0.0 — Portal Platform</h2>
+              <span>Previous release</span>
+            </div>
+            <ul>
+              <li>Google and Discord authentication.</li>
+              <li>Client and admin commission dashboards.</li>
+              <li>Stripe payments, automated PDF invoices and invoice archive.</li>
+              <li>Pro bono commission billing support.</li>
+              <li>Private Cloudflare R2 project-file transfer.</li>
+              <li>Live commission chat and portal notifications.</li>
+              <li>Past Works archive with optional YouTube showcases and public portfolio visibility.</li>
+            </ul>
+          </section>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <span>© <span data-current-year></span> XDevs Programming</span>
+      <div class="legal-footer-links">
+        <a href="pages/legal/privacy.html">Privacy</a>
+        <a href="pages/legal/terms.html">Terms</a>
+        <a href="changelog.html">Changelog</a>
+        <span data-app-version></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/version.js"></script>
+</body>
+</html>

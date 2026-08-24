@@ -128,3 +128,24 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+
+
+.auth-legal {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.auth-legal a {
+  color: var(--primary-light);
+}
+
+.auth-version {
+  margin-top: .9rem;
+  color: var(--muted);
+  font-size: .72rem;
+  text-align: center;
+}

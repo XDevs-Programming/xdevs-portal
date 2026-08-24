@@ -8,6 +8,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const packageInfo = require("./package.json");
 
 const connectDatabase = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -112,12 +113,23 @@ app.get("/", (req, res) => {
   });
 });
 
+
+app.get("/api/version", (req, res) => {
+  res.status(200).json({
+    success: true,
+    name: "XDevs Portal",
+    version: packageInfo.version,
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
 app.get("/api/health", (req, res) => {
   const connected = mongoose.connection.readyState === 1;
 
   res.status(connected ? 200 : 503).json({
     success: connected,
     service: "xdevs-portal-api",
+    version: packageInfo.version,
     database: connected ? "connected" : "disconnected"
   });
 });
