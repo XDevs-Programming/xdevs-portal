@@ -1,9 +1,12 @@
 /pages/auth/callback.html
-  Cache-Control: no-store
+  Cache-Control: no-store, max-age=0
+  Pragma: no-cache
   Referrer-Policy: no-referrer
 
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://xdevs-portal.onrender.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://xdevs-portal.onrender.com wss://xdevs-portal.onrender.com; frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self' https://xdevs-portal.onrender.com; frame-ancestors 'none'; upgrade-insecure-requests

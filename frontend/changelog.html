@@ -44,6 +44,7 @@
     <div class="container legal-layout">
       <aside class="legal-toc">
         <strong>Releases</strong>
+        <a href="#v630">v6.3.0</a>
         <a href="#v620">v6.2.0</a>
         <a href="#v610">v6.1.0</a>
         <a href="#v600">v6.0.0</a>
@@ -51,6 +52,24 @@
 
       <article class="legal-document">
         <div class="changelog-list">
+
+          <section class="release-card" id="v630">
+            <div class="release-header">
+              <h2>v6.3.0 — Security & Landing Page Polish</h2>
+              <span>3 September 2026</span>
+            </div>
+            <ul>
+              <li>Rebuilt the public landing page with a premium portal-focused design and improved mobile layout.</li>
+              <li>Added API, authentication and write-action rate limiting.</li>
+              <li>Added stricter frontend Content Security Policy and browser security headers.</li>
+              <li>Moved bearer-token persistence from localStorage to tab-scoped sessionStorage.</li>
+              <li>Removed inline authentication callback JavaScript so the CSP can block inline scripts.</li>
+              <li>Added no-store handling for private API responses and reduced API request-body limits.</li>
+              <li>Improved mobile navigation accessibility, keyboard escape behavior and outside-click closing.</li>
+            </ul>
+          </section>
+
+
           <section class="release-card" id="v620">
             <div class="release-header">
               <h2>v6.2.0 — Smart Wake Scheduler</h2>

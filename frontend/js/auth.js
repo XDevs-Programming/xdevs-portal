@@ -5,21 +5,27 @@
   const TOKEN_KEY = "xdevs_access_token";
   const USER_KEY = "xdevs_user";
 
+  // v6.3 security migration: do not keep bearer tokens across browser sessions.
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+
   function getToken() {
-    return localStorage.getItem(TOKEN_KEY);
+    return sessionStorage.getItem(TOKEN_KEY);
   }
 
   function setToken(token) {
-    localStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem(TOKEN_KEY, token);
   }
 
   function clearAuth() {
+    sessionStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_KEY);
     localStorage.removeItem(USER_KEY);
   }
 
   function setUser(user) {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
   async function loginWith(provider) {

@@ -4,7 +4,7 @@ window.APP_CONFIG = Object.freeze({
   CALLBACK_PAGE: "/pages/auth/callback.html",
   CLIENT_DASHBOARD: "/pages/dashboard/client.html",
   ADMIN_DASHBOARD: "/pages/dashboard/admin.html",
-  VERSION: "6.2.0",
+  VERSION: "6.3.0",
   RELEASE_DATE: "3 September 2026",
   LEGAL_CONTACT_EMAIL: "xdevs.programming@gmail.com",
   WAKE_HEALTH_PATH: "/api/health",

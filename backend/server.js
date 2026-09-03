@@ -22,6 +22,7 @@ const { installChatSocket } = require("./sockets/chatSocket");
 const { stripeWebhook } = require("./controllers/paymentController");
 const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
+const { standardHeaders, apiLimiter, authLimiter, writeLimiter } = require("./middleware/security");
 
 const required = [
   "MONGO_URI",
@@ -76,7 +77,14 @@ app.disable("x-powered-by");
 
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    referrerPolicy: { policy: "no-referrer" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'none'"],
+        frameAncestors: ["'none'"]
+      }
+    }
   })
 );
 
@@ -87,7 +95,9 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(new Error(`CORS blocked origin: ${origin}`));
+      const error = new Error("Origin is not allowed by CORS.");
+      error.status = 403;
+      return callback(error);
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
@@ -101,10 +111,20 @@ app.post(
   stripeWebhook
 );
 
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: false, limit: "1mb" }));
+app.use(express.json({ limit: "512kb", strict: true }));
+app.use(express.urlencoded({ extended: false, limit: "256kb", parameterLimit: 100 }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(morgan(production ? "combined" : "dev"));
+
+app.use("/api", standardHeaders);
+app.use("/api", apiLimiter);
+app.use("/api/auth", authLimiter);
+app.use(["/api/commissions", "/api/reviews", "/api/notifications", "/api/payments", "/api/files", "/api/chat"], (req, res, next) => {
+  if (["POST", "PATCH", "PUT", "DELETE"].includes(req.method)) {
+    return writeLimiter(req, res, next);
+  }
+  next();
+});
 
 app.get("/", (req, res) => {
   res.json({
