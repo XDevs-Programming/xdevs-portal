@@ -44,6 +44,7 @@
     <div class="container legal-layout">
       <aside class="legal-toc">
         <strong>Releases</strong>
+        <a href="#v631">v6.3.1</a>
         <a href="#v630">v6.3.0</a>
         <a href="#v620">v6.2.0</a>
         <a href="#v610">v6.1.0</a>
@@ -52,6 +53,20 @@
 
       <article class="legal-document">
         <div class="changelog-list">
+
+          <section class="release-card" id="v631">
+            <div class="release-header">
+              <h2>v6.3.1 — OAuth Login CSP Hotfix</h2>
+              <span>3 September 2026</span>
+            </div>
+            <ul>
+              <li>Fixed Discord and Google sign-in buttons being blocked by the v6.3 Content Security Policy.</li>
+              <li>Moved login-page event handlers into an external script so the strict CSP can remain enabled.</li>
+              <li>Added clearer sign-in startup error handling without weakening browser security headers.</li>
+            </ul>
+          </section>
+
+
 
           <section class="release-card" id="v630">
             <div class="release-header">
