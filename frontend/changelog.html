@@ -44,12 +44,27 @@
     <div class="container legal-layout">
       <aside class="legal-toc">
         <strong>Releases</strong>
+        <a href="#v620">v6.2.0</a>
         <a href="#v610">v6.1.0</a>
         <a href="#v600">v6.0.0</a>
       </aside>
 
       <article class="legal-document">
         <div class="changelog-list">
+          <section class="release-card" id="v620">
+            <div class="release-header">
+              <h2>v6.2.0 — Smart Wake Scheduler</h2>
+              <span>3 September 2026</span>
+            </div>
+            <ul>
+              <li>Added silent Render pre-warming when visitors enter the public website.</li>
+              <li>Added a branded XDevs startup screen when secure services are still waking.</li>
+              <li>OAuth sign-in now waits for backend readiness before leaving the Netlify frontend.</li>
+              <li>Direct dashboard visits automatically wait for the API before authenticated requests begin.</li>
+              <li>Socket.IO now loads dynamically after the backend is ready, reducing cold-start blocking.</li>
+              <li>Added configurable wake timeouts and retry intervals in the central frontend config.</li>
+            </ul>
+          </section>
           <section class="release-card" id="v610">
             <div class="release-header">
               <h2>v6.1.0 — Legal & Transparency</h2>

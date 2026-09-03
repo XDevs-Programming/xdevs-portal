@@ -55,6 +55,7 @@
 
   <script src="../../js/config.js"></script>
   <script src="../../js/version.js"></script>
+  <script src="../../js/wake-manager.js"></script>
   <script src="../../js/auth.js"></script>
   <script>
     const message = document.getElementById("login-message");
@@ -66,13 +67,29 @@
       history.replaceState({}, "", window.location.pathname);
     }
 
+    const beginLogin = async (provider, button) => {
+      const original = button.textContent;
+      button.disabled = true;
+      button.textContent = "Preparing secure sign-in…";
+      try {
+        await XDevsAuth.loginWith(provider);
+      } finally {
+        if (document.visibilityState === "visible") {
+          button.disabled = false;
+          button.textContent = original;
+        }
+      }
+    };
+
     document
       .getElementById("discord-login")
-      .addEventListener("click", () => XDevsAuth.loginWith("discord"));
+      .addEventListener("click", (event) => beginLogin("discord", event.currentTarget));
 
     document
       .getElementById("google-login")
-      .addEventListener("click", () => XDevsAuth.loginWith("google"));
+      .addEventListener("click", (event) => beginLogin("google", event.currentTarget));
+
+    window.setTimeout(() => window.XDevsWake?.prewarm(), 300);
 
     (async () => {
       if (!XDevsAuth.getToken()) return;

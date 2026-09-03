@@ -470,3 +470,47 @@ a {
   color: var(--muted);
   font-size: .82rem;
 }
+
+
+/* XDevs Smart Wake Scheduler */
+.wake-screen[hidden] { display: none !important; }
+.wake-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(124, 92, 255, .20), transparent 36%),
+    rgba(6, 9, 16, .96);
+  backdrop-filter: blur(18px);
+}
+.wake-active { overflow: hidden !important; }
+.wake-card {
+  width: min(100%, 31rem);
+  padding: clamp(1.4rem, 5vw, 2.2rem);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 1.35rem;
+  background: rgba(16, 23, 38, .92);
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+  text-align: center;
+  color: #f7f8fc;
+}
+.wake-brand { display:flex; align-items:center; justify-content:center; gap:.6rem; font-weight:800; }
+.wake-mark { display:grid; place-items:center; width:2rem; height:2rem; border-radius:.6rem; background:#7c5cff; color:white; }
+.wake-orbit { position:relative; width:4.6rem; height:4.6rem; margin:1.6rem auto 1.2rem; border:1px solid rgba(255,255,255,.10); border-radius:50%; }
+.wake-orbit::before { content:""; position:absolute; inset:1rem; border-radius:50%; background:radial-gradient(circle, rgba(124,92,255,.75), rgba(124,92,255,.08)); box-shadow:0 0 35px rgba(124,92,255,.35); }
+.wake-orbit span { position:absolute; left:50%; top:-.22rem; width:.45rem; height:.45rem; border-radius:50%; background:white; transform-origin:0 2.52rem; animation:wakeOrbit 1.35s linear infinite; }
+.wake-eyebrow { margin:0 0 .45rem; color:#9e8cff; font-size:.7rem; font-weight:850; letter-spacing:.14em; }
+.wake-card h1 { margin:0; font-size:clamp(1.65rem, 6vw, 2.25rem); line-height:1.08; }
+.wake-copy { margin:.8rem auto 1.2rem; max-width:27rem; color:#aeb7c8; line-height:1.55; }
+.wake-progress { overflow:hidden; height:.35rem; margin:1.2rem 0; border-radius:999px; background:rgba(255,255,255,.08); }
+.wake-progress span { display:block; width:42%; height:100%; border-radius:inherit; background:#7c5cff; animation:wakeProgress 1.35s ease-in-out infinite; }
+.wake-status-row { display:flex; align-items:center; justify-content:center; gap:.55rem; color:#dce2ed; font-size:.88rem; }
+.wake-status-dot { width:.48rem; height:.48rem; border-radius:50%; background:#64e6a5; box-shadow:0 0 0 .25rem rgba(100,230,165,.10); animation:wakePulse 1.2s ease-in-out infinite; }
+.wake-card small { display:block; margin-top:.55rem; color:#7f899a; }
+@keyframes wakeOrbit { to { transform:rotate(360deg); } }
+@keyframes wakeProgress { 0% { transform:translateX(-105%); } 50% { transform:translateX(75%); } 100% { transform:translateX(245%); } }
+@keyframes wakePulse { 50% { opacity:.45; } }
+@media (prefers-reduced-motion: reduce) { .wake-orbit span,.wake-progress span,.wake-status-dot { animation-duration:3s; } }

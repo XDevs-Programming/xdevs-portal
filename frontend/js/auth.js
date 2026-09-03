@@ -22,13 +22,19 @@
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  function loginWith(provider) {
-    window.location.assign(
-      `${config.API_BASE_URL}/api/auth/${provider}`
-    );
+  async function loginWith(provider) {
+    if (window.XDevsWake) {
+      return window.XDevsWake.loginWith(provider);
+    }
+    window.location.assign(`${config.API_BASE_URL}/api/auth/${provider}`);
   }
 
   async function apiFetch(path, options = {}) {
+    if (window.XDevsWake) {
+      const ready = await window.XDevsWake.ensureReady({ visible: true });
+      if (!ready) throw new Error("XDevs services are still starting. Please try again shortly.");
+    }
+
     const headers = new Headers(options.headers || {});
     const token = getToken();
 

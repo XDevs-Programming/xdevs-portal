@@ -40,7 +40,7 @@
     document.querySelector("[data-chat-back]")?.addEventListener("click", showConversationList);
 
     await loadConversations();
-    connectSocket();
+    await connectSocket();
 
     const hash = window.location.hash.replace("#", "");
     if (hash === "chat" && conversations.length) {
@@ -137,7 +137,11 @@
     }
   }
 
-  function connectSocket() {
+  async function connectSocket() {
+    if (typeof window.io !== "function" && window.XDevsWake) {
+      await window.XDevsWake.loadSocketClient();
+    }
+
     if (typeof window.io !== "function") {
       setStatus("Chat unavailable");
       els.messages && (els.messages.innerHTML = '<div class="chat-error">Live chat could not load. Refresh the page and try again.</div>');
