@@ -49,38 +49,6 @@
   <script src="js/config.js"></script>
   <script src="js/version.js"></script>
   <script src="js/wake-manager.js"></script>
-  <script>
-    const escapeHtml = (value) => String(value ?? "")
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-
-    fetch(`${APP_CONFIG.API_BASE_URL}/api/commissions/public/past-works`)
-      .then((response) => response.json())
-      .then((data) => {
-        const list = document.getElementById("public-past-works");
-        if (!data.commissions?.length) {
-          list.innerHTML = '<p class="notice">Public project showcases are coming soon.</p>';
-          return;
-        }
-        list.innerHTML = data.commissions.map((item) => {
-          const c = item.completion || {};
-          const media = c.youtubeVideoId
-            ? `<iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.youtubeVideoId)}" title="${escapeHtml(item.title)}" loading="lazy" allowfullscreen></iframe>`
-            : c.thumbnailUrl
-            ? `<img src="${c.thumbnailUrl}" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover">`
-            : "";
-          return `<article class="past-work-card">${media}<div class="past-work-content">
-            <span class="status">${escapeHtml(item.category)}</span>
-            <h2 style="margin-top:.7rem">${escapeHtml(item.title)}</h2>
-            <p class="commission-description">${escapeHtml(c.summary || "")}</p>
-            <div class="tech-list">${(c.technologies || []).map((tech) => `<span class="tech-chip">${escapeHtml(tech)}</span>`).join("")}</div>
-          </div></article>`;
-        }).join("");
-      })
-      .catch(() => {
-        document.getElementById("public-past-works").innerHTML =
-          '<p class="notice">Past Works is temporarily unavailable.</p>';
-      });
-  </script>
+  <script src="js/past-works.js"></script>
 </body>
 </html>

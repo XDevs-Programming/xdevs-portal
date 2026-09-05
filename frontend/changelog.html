@@ -44,6 +44,7 @@
     <div class="container legal-layout">
       <aside class="legal-toc">
         <strong>Releases</strong>
+        <a href="#v632">v6.3.2</a>
         <a href="#v631">v6.3.1</a>
         <a href="#v630">v6.3.0</a>
         <a href="#v620">v6.2.0</a>
@@ -53,6 +54,22 @@
 
       <article class="legal-document">
         <div class="changelog-list">
+
+          <section class="release-card" id="v632">
+            <div class="release-header">
+              <h2>v6.3.2 — Past Works CSP Hotfix</h2>
+              <span>5 September 2026</span>
+            </div>
+            <ul>
+              <li>Fixed the public Past Works page remaining permanently on “Loading projects…” after the v6.3 security update.</li>
+              <li>Moved the Past Works renderer out of inline JavaScript so it is permitted by the strict Content Security Policy.</li>
+              <li>Added Render wake-manager integration before loading public project data.</li>
+              <li>Added explicit API response checks and improved failure messaging.</li>
+              <li>Kept YouTube embeds restricted to the privacy-enhanced youtube-nocookie.com domain.</li>
+            </ul>
+          </section>
+
+
 
           <section class="release-card" id="v631">
             <div class="release-header">
