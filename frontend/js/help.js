@@ -1,0 +1,1 @@
+(function(){const q=document.getElementById("help-search"),cards=[...document.querySelectorAll("[data-help]")];q?.addEventListener("input",()=>{const term=q.value.trim().toLowerCase();let n=0;cards.forEach(c=>{const show=!term||c.textContent.toLowerCase().includes(term);c.hidden=!show;if(show)n++});document.getElementById("help-empty").hidden=n!==0})})();

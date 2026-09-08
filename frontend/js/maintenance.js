@@ -1,0 +1,1 @@
+(function(){if(!APP_CONFIG.MAINTENANCE_MODE)return;const ok=["/","/index.html","/support","/support.html","/help","/help.html","/status","/status.html","/services","/services.html","/maintenance.html"];if(!ok.includes(location.pathname))location.replace("/maintenance.html")})();

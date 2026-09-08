@@ -12,6 +12,7 @@ const packageInfo = require("./package.json");
 
 const connectDatabase = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const supportRoutes = require("./routes/supportRoutes");
 const commissionRoutes = require("./routes/commissionRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
@@ -154,6 +155,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/support", supportRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/commissions", commissionRoutes);
 app.use("/api/reviews", reviewRoutes);
