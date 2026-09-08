@@ -1,6 +1,6 @@
 {
   "name": "xdevs-portal-api",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "description": "Backend API for the XDevs Programming commission portal",
   "main": "server.js",
   "type": "commonjs",
@@ -27,8 +27,7 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "archiver": "^7.0.1",
     "socket.io": "^4.8.1",
-    "express-rate-limit": "^8.1.0",
-    "nodemailer": "^7.0.6"
+    "express-rate-limit": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
