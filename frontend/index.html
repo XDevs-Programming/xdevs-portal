@@ -13,164 +13,78 @@
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/usability.css">
+  <link rel="stylesheet" href="css/v651-landing.css">
 </head>
 
 <body>
   <div class="site-glow site-glow-one" aria-hidden="true"></div>
   <div class="site-glow site-glow-two" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <nav class="navbar container" aria-label="Main navigation">
+  <header class="site-header v651-header">
+    <nav class="navbar container v651-navbar" aria-label="Main navigation">
       <a class="brand" href="#top" aria-label="XDevs Programming home">
         <span class="brand-mark" aria-hidden="true">X</span>
-        <span>
-          <strong>XDevs</strong>
-          <small>Programming</small>
-        </span>
+        <span><strong>XDevs</strong><small>Programming</small></span>
       </a>
 
-      <button
-        class="button secondary small menu-toggle"
-        type="button"
-        data-menu-toggle
-        aria-expanded="false"
-        aria-label="Open navigation menu"
-      >
-        Menu
+      <button class="v651-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-label="Open navigation menu">
+        <span></span><span></span>
       </button>
 
-      <div class="nav-links" data-nav-menu>
+      <div class="nav-links v651-nav-links" data-nav-menu>
         <a href="#services">Services</a>
-        <a href="#process">Process</a>
-        <a href="#pricing">Pricing</a>
-        <a href="past-works.html">Past Works</a>
-        <a href="#reviews">Reviews</a>
+        <a href="past-works.html">Work</a>
         <a href="support.html">Support</a>
-        <a class="nav-login" href="pages/auth/login.html">Client portal</a>
+        <a class="v651-portal-link" href="pages/auth/login.html">Client Portal <span aria-hidden="true">→</span></a>
       </div>
     </nav>
   </header>
 
   <main id="top">
-    <section class="hero hero-v63">
-      <div class="container hero-grid hero-grid-v63">
-        <div class="hero-copy-column">
-          <div class="availability-pill">
-            <span class="availability-dot" aria-hidden="true"></span>
-            Custom development commissions open
-          </div>
-
-          <p class="eyebrow">DESIGN · DEVELOPMENT · DEPLOYMENT</p>
-          <h1>
-            Software that feels
-            <span class="gradient-text">built for you.</span>
-          </h1>
-          <p class="hero-copy">
-            Bespoke websites, Discord bots, APIs and automation systems — planned
-            around the way your project actually works, then managed through a
-            dedicated client portal from request to delivery.
+    <section class="v651-hero">
+      <div class="container v651-hero-grid">
+        <div class="v651-hero-copy">
+          <div class="v651-kicker"><span></span> Independent software development</div>
+          <h1>Custom software.<br><span>Without the agency clutter.</span></h1>
+          <p>
+            Websites, Discord systems, APIs and automation built around your actual requirements —
+            with direct communication and a private client portal from brief to delivery.
           </p>
-
-          <div class="hero-actions">
-            <a class="button button-primary-glow" href="pages/auth/login.html">
-              Start a commission
-              <span aria-hidden="true">→</span>
-            </a>
-            <a class="button secondary" href="past-works.html">View past work</a>
+          <div class="v651-hero-actions">
+            <a class="v651-primary" href="support.html">Start a project <span aria-hidden="true">→</span></a>
+            <a class="v651-secondary" href="past-works.html">See recent work</a>
           </div>
-
-          <div class="hero-trust-row" aria-label="Portal features">
-            <span>Secure OAuth</span>
-            <span>Live project chat</span>
-            <span>Private file delivery</span>
-            <span>Stripe payments</span>
+          <div class="v651-proof-row">
+            <span><b>01</b> Direct contact</span>
+            <span><b>02</b> Secure portal</span>
+            <span><b>03</b> Clear delivery</span>
           </div>
         </div>
 
-        <aside class="portal-preview" aria-label="XDevs client portal preview">
-          <div class="preview-window">
-            <div class="preview-titlebar">
-              <div class="preview-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-              <span class="preview-url">portal.xdevs / project</span>
-              <span class="preview-secure">● Secure</span>
-            </div>
-
-            <div class="preview-shell">
-              <div class="preview-sidebar">
-                <div class="preview-logo">X</div>
-                <span class="preview-nav active"></span>
-                <span class="preview-nav"></span>
-                <span class="preview-nav"></span>
-                <span class="preview-nav"></span>
-              </div>
-
-              <div class="preview-content">
-                <div class="preview-head">
-                  <div>
-                    <span class="preview-label">CURRENT COMMISSION</span>
-                    <strong>Client Portal Build</strong>
-                  </div>
-                  <span class="preview-status">In progress</span>
-                </div>
-
-                <div class="preview-progress">
-                  <div class="preview-progress-bar"><span></span></div>
-                  <div class="preview-progress-meta">
-                    <span>Development</span>
-                    <span>72%</span>
-                  </div>
-                </div>
-
-                <div class="preview-grid">
-                  <article class="preview-card">
-                    <span class="preview-icon">↗</span>
-                    <small>Latest update</small>
-                    <strong>Dashboard polish</strong>
-                    <p>UI pass completed and ready for review.</p>
-                  </article>
-                  <article class="preview-card">
-                    <span class="preview-icon">⌁</span>
-                    <small>Project chat</small>
-                    <strong>Live & private</strong>
-                    <p>Keep requirements and feedback with the project.</p>
-                  </article>
-                </div>
-
-                <div class="preview-activity">
-                  <div><span class="activity-check">✓</span><p><strong>Invoice issued</strong><small>Project record updated</small></p></div>
-                  <div><span class="activity-check">✓</span><p><strong>Files secured</strong><small>Private delivery storage</small></p></div>
-                </div>
-              </div>
-            </div>
+        <aside class="v651-showcase" aria-label="Client portal preview">
+          <div class="v651-showcase-top">
+            <span>CLIENT PORTAL</span>
+            <span class="v651-live"><i></i> Project active</span>
           </div>
-
-          <div class="floating-proof floating-proof-one">
-            <span>✓</span>
-            <div><strong>Project tracked</strong><small>One portal, one workflow</small></div>
+          <div class="v651-project-title">
+            <div><small>Current commission</small><strong>Website & Automation Build</strong></div>
+            <span>72%</span>
           </div>
-
-          <div class="floating-proof floating-proof-two">
-            <span>⌁</span>
-            <div><strong>Direct communication</strong><small>Built-in live chat</small></div>
+          <div class="v651-progress"><i></i></div>
+          <div class="v651-showcase-grid">
+            <div><small>STATUS</small><strong>Development</strong><p>Build in progress</p></div>
+            <div><small>COMMUNICATION</small><strong>Live chat</strong><p>Replies stay with the project</p></div>
+            <div><small>FILES</small><strong>Private delivery</strong><p>Secure project storage</p></div>
+            <div><small>PAYMENTS</small><strong>Tracked</strong><p>Invoices in one place</p></div>
           </div>
+          <a href="pages/auth/login.html" class="v651-preview-link">Open client portal <span>↗</span></a>
         </aside>
       </div>
     </section>
 
-    <section class="capability-strip" aria-label="Development capabilities">
-      <div class="container capability-track">
-        <span>Responsive Web Apps</span>
-        <i></i>
-        <span>Discord.js Systems</span>
-        <i></i>
-        <span>Node.js APIs</span>
-        <i></i>
-        <span>MongoDB</span>
-        <i></i>
-        <span>Automation</span>
-        <i></i>
-        <span>Deployment</span>
+    <section class="v651-capabilities" aria-label="Development capabilities">
+      <div class="container">
+        <span>Websites</span><i></i><span>Discord Bots</span><i></i><span>APIs</span><i></i><span>Automation</span><i></i><span>Client Portals</span>
       </div>
     </section>
 
@@ -178,13 +92,12 @@
       <div class="container">
         <div class="split-heading">
           <div>
-            <p class="eyebrow">WHAT XDEVS BUILDS</p>
-            <h2>From a small idea to a complete working platform.</h2>
+            <p class="eyebrow">SERVICES</p>
+            <h2>Pick the outcome. The stack comes second.</h2>
           </div>
           <p>
-            Every commission is scoped individually. You get the functionality
-            your project needs without paying for a bloated template or features
-            that serve no purpose.
+            No bloated packages. Each commission is scoped around what the project actually needs,
+            with a clear route from brief to deployment.
           </p>
         </div>
 
@@ -479,6 +392,5 @@
   <script src="js/navigation.js"></script>
   <script src="js/faq.js"></script>
   <script src="js/home.js"></script>
-  <script src="js/usability.js" defer></script>
 </body>
 </html>
