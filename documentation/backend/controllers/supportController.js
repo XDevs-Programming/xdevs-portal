@@ -14,35 +14,25 @@ exports.sendSupportEmail=async(req,res,next)=>{try{
  const received=new Date().toLocaleString("en-GB",{timeZone:"Europe/London",dateStyle:"full",timeStyle:"short"});
  const rows=[["Reference",reference],["From",name],["Email",email],["Category",category],["Project type",projectType||"Not specified"],["Budget",budget||"Not specified"],["Received",received]].map(([a,b])=>`<tr><td style="padding:9px 12px;color:#8f9bb3;border-bottom:1px solid #20283a">${esc(a)}</td><td style="padding:9px 12px;color:#f4f7ff;border-bottom:1px solid #20283a">${esc(b)}</td></tr>`).join("");
  const html=`<div style="background:#070a12;padding:28px;font-family:Arial,sans-serif;color:#f4f7ff"><div style="max-width:680px;margin:auto;background:#0f1625;border:1px solid #20283a;border-radius:16px;overflow:hidden"><div style="padding:24px;background:linear-gradient(135deg,#7457ff,#258be8)"><b>XDEVS PROGRAMMING</b><h1>New public support enquiry</h1></div><table style="width:100%;border-collapse:collapse">${rows}</table><div style="padding:22px"><b>SUBJECT</b><h2>${esc(subject)}</h2><b>MESSAGE</b><div style="white-space:pre-wrap;line-height:1.65;margin-top:8px">${esc(message)}</div></div></div></div>`;
- const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) throw new Error("Support email API is not configured.");
-
-    const emailResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: `"XDevs Support" <${from}>`,
-        to: [destination],
-        reply_to: email,
-        subject: `[${reference}] ${category}: ${subject}`,
-        text: [
-          `XDevs Support Enquiry — ${reference}`,
-          `Name: ${name}`, `Email: ${email}`, `Category: ${category}`,
-          `Project type: ${projectType || "Not specified"}`, `Budget: ${budget || "Not specified"}`,
-          `Received: ${received}`, "", `Subject: ${subject}`, "", message
-        ].join("\n"),
-        html: htmlBody
-      })
-    });
-
-    if (!emailResponse.ok) {
-      const details = await emailResponse.json().catch(() => ({}));
-      const deliveryError = new Error(`Email API rejected the support message: ${details.message || emailResponse.statusText}`);
-      deliveryError.status = 502;
-      throw deliveryError;
-    }
+ const apiKey=process.env.BREVO_API_KEY;
+ if(!apiKey||!from)throw new Error("Support email API is not configured.");
+ const emailResponse=await fetch("https://api.brevo.com/v3/smtp/email",{
+  method:"POST",
+  headers:{"accept":"application/json","api-key":apiKey,"content-type":"application/json"},
+  body:JSON.stringify({
+   sender:{name:"XDevs Support",email:from},
+   to:[{email:to}],
+   replyTo:{email,name},
+   subject:`[${reference}] ${category}: ${subject}`,
+   textContent:`${reference}\nName: ${name}\nEmail: ${email}\nCategory: ${category}\nProject: ${projectType||"Not specified"}\nBudget: ${budget||"Not specified"}\n\n${subject}\n\n${message}`,
+   htmlContent:html
+  })
+ });
+ if(!emailResponse.ok){
+  const details=await emailResponse.json().catch(()=>({}));
+  const deliveryError=new Error(`Email API rejected the support message: ${details.message||emailResponse.statusText}`);
+  deliveryError.status=502;
+  throw deliveryError;
+ }
  res.json({success:true,reference,message:"Your message has been sent to XDevs."});
 }catch(e){next(e)}};
