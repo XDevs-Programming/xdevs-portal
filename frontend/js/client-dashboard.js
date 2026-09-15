@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindForms();
   showPaymentReturnMessage();
   await XDevsChat.init("client");
-  await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive(), loadPastWorks()]);
+  await Promise.all([loadCommissions(), loadPayments(), loadClientInvoiceArchive(), loadPastWorks(), loadClientRecurringContracts()]);
   bindClientFiles();
   bindClientInvoiceArchive();
 });
@@ -70,12 +70,13 @@ function bindForms() {
 function showPaymentReturnMessage() {
   const params = new URLSearchParams(location.search);
   const state = params.get("payment");
-  if (!state) return;
+  const recurringState = params.get("recurring");
+  if (!state && !recurringState) return;
   const banner = document.getElementById("payment-banner");
   banner.hidden = false;
-  banner.textContent = state === "success"
-    ? "Payment submitted successfully. Stripe confirmation may take a few seconds to appear."
-    : "Payment was cancelled. Your payment request remains available.";
+  banner.textContent = recurringState
+    ? (recurringState === "success" ? "Recurring payment setup completed. Stripe confirmation may take a few seconds to appear." : "Recurring payment setup was not completed. You can try again when ready.")
+    : (state === "success" ? "Payment submitted successfully. Stripe confirmation may take a few seconds to appear." : "Payment was cancelled. Your payment request remains available.");
   history.replaceState({}, "", location.pathname);
 }
 
@@ -447,7 +448,7 @@ function bindClientTabs() {
   });
 
   const hashTarget = window.location.hash.replace("#", "");
-  if (["overview", "commissions", "past-works", "payments", "invoices", "files", "chat"].includes(hashTarget)) {
+  if (["overview", "commissions", "past-works", "payments", "recurring", "invoices", "files", "chat"].includes(hashTarget)) {
     show(hashTarget);
   } else {
     show("overview");
@@ -559,3 +560,52 @@ function bindClientNotifications() {
     init();
   }
 })();
+
+/* v6.6 Recurring services */
+let clientRecurringContracts = [];
+
+async function loadClientRecurringContracts() {
+  const list = document.getElementById("client-recurring-list");
+  if (!list) return;
+  try {
+    const result = await XDevsAuth.apiFetch("/api/recurring/mine");
+    clientRecurringContracts = result.contracts || [];
+    renderClientRecurringContracts();
+  } catch (error) { list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`; }
+}
+
+function renderClientRecurringContracts() {
+  const list = document.getElementById("client-recurring-list");
+  if (!list) return;
+  if (!clientRecurringContracts.length) { list.innerHTML = '<p class="notice">You do not have any recurring services yet.</p>'; return; }
+  list.innerHTML = clientRecurringContracts.map((c)=>`
+    <article class="recurring-card" data-client-recurring-id="${c._id}">
+      <div class="commission-header"><div><h3>${escapeHtml(c.name)}</h3><div class="commission-meta">${escapeHtml(c.commission?.title || "XDevs service")}</div></div><span class="payment-status ${escapeHtml(c.status)}">${escapeHtml(String(c.status).replaceAll("_"," "))}</span></div>
+      <div class="payment-amount">${formatMoney(c.amount,c.currency)} / ${c.interval === "year" ? "year" : "month"}</div>
+      ${c.description ? `<p class="commission-description">${escapeHtml(c.description)}</p>` : ""}
+      <div class="recurring-detail-grid"><div class="recurring-detail"><span>Billing</span><strong>${c.interval === "year" ? "Yearly" : "Monthly"}</strong></div><div class="recurring-detail"><span>Current period ends</span><strong>${c.currentPeriodEnd ? formatDate(c.currentPeriodEnd) : "Shown after setup"}</strong></div><div class="recurring-detail"><span>Payment setup</span><strong>${c.stripeSubscriptionId ? "Active through Stripe" : "Action required"}</strong></div></div>
+      ${c.status === "cancellation_requested" ? '<p class="notice">Your cancellation request has been sent to XDevs for review.</p>' : ""}
+      ${c.status === "cancelling" ? `<p class="notice">Cancellation is scheduled${c.currentPeriodEnd ? ` for ${formatDate(c.currentPeriodEnd)}` : " at the end of the billing period"}.</p>` : ""}
+      <div class="card-actions">
+        ${["awaiting_setup","incomplete"].includes(c.status) ? '<button class="button" data-recurring-setup>Set up recurring payment</button>' : ""}
+        ${["active","past_due"].includes(c.status) ? '<button class="button secondary" data-recurring-request-cancel>Request cancellation</button>' : ""}
+      </div>
+    </article>`).join("");
+  list.querySelectorAll("[data-recurring-setup]").forEach(b=>b.addEventListener("click",()=>setupRecurringPayment(b)));
+  list.querySelectorAll("[data-recurring-request-cancel]").forEach(b=>b.addEventListener("click",()=>requestRecurringCancellation(b)));
+}
+
+async function setupRecurringPayment(button) {
+  const id = button.closest("[data-client-recurring-id]").dataset.clientRecurringId;
+  button.disabled = true; const original = button.textContent; button.textContent = "Opening Stripe…";
+  try { const result = await XDevsAuth.apiFetch(`/api/recurring/${id}/setup`, {method:"POST"}); location.assign(result.checkoutUrl); }
+  catch(error) { alert(error.message); button.disabled=false; button.textContent=original; }
+}
+
+async function requestRecurringCancellation(button) {
+  const id = button.closest("[data-client-recurring-id]").dataset.clientRecurringId;
+  const reason = prompt("Optional: tell XDevs why you want to cancel this service. Leave blank to continue without a reason.");
+  if (reason === null) return;
+  try { await XDevsAuth.apiFetch(`/api/recurring/${id}/request-cancellation`, {method:"POST",body:JSON.stringify({reason})}); await loadClientRecurringContracts(); }
+  catch(error) { alert(error.message); }
+}

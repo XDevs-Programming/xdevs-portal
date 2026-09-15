@@ -10,10 +10,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   await XDevsChat.init("admin");
   document.getElementById("payment-form")?.addEventListener("submit", createPaymentRequest);
   document.getElementById("payment-billing-type")?.addEventListener("change", updateBillingFields);
+  document.getElementById("recurring-form")?.addEventListener("submit", createRecurringContract);
   updateBillingFields();
   document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => document.getElementById(button.dataset.openDialog)?.showModal()));
   document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog")?.close()));
-  await Promise.all([loadCommissions(), loadReviews(), loadPayments(), loadAdminInvoiceArchive()]);
+  await Promise.all([loadCommissions(), loadReviews(), loadPayments(), loadAdminInvoiceArchive(), loadRecurringContracts()]);
   bindAdminInvoiceArchive();
   bindAdminFiles();
 });
@@ -84,7 +85,7 @@ function bindTabs() {
   });
 
   const hashTarget = window.location.hash.replace("#", "");
-  const valid = ["overview", "commissions", "payments", "invoices", "files", "chat", "notifications", "reviews"];
+  const valid = ["overview", "commissions", "payments", "recurring", "invoices", "files", "chat", "notifications", "reviews"];
   show(valid.includes(hashTarget) ? hashTarget : "overview");
 }
 
@@ -97,6 +98,7 @@ async function loadCommissions() {
     renderCommissions();
     updateStats();
     populatePaymentCommissionOptions();
+    populateRecurringCommissionOptions();
     populateAdminFileCommissions();
   } catch (error) {
     list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
@@ -870,3 +872,78 @@ function formatDateTime(value) {
     init();
   }
 })();
+
+/* v6.6 Recurring services */
+let recurringContracts = [];
+
+async function loadRecurringContracts() {
+  const list = document.getElementById("admin-recurring-list");
+  if (!list) return;
+  try {
+    const result = await XDevsAuth.apiFetch("/api/recurring");
+    recurringContracts = result.contracts || [];
+    renderRecurringContracts();
+  } catch (error) { list.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`; }
+}
+
+function recurringStatusLabel(status) { return String(status || "").replaceAll("_", " "); }
+function recurringPeriod(contract) { return contract.currentPeriodEnd ? formatDate(contract.currentPeriodEnd) : "Set by Stripe after activation"; }
+
+function renderRecurringContracts() {
+  const list = document.getElementById("admin-recurring-list");
+  const summary = document.getElementById("admin-recurring-summary");
+  if (!list) return;
+  const active = recurringContracts.filter((c) => ["active","past_due","cancellation_requested","cancelling"].includes(c.status));
+  const monthly = active.filter((c) => c.interval === "month").reduce((sum,c) => sum + c.amount, 0);
+  if (summary) summary.innerHTML = `<article class="stat-card"><span class="stat-label">Active services</span><strong class="stat-value">${active.length}</strong></article><article class="stat-card"><span class="stat-label">Monthly recurring</span><strong class="stat-value">${formatMoney(monthly,"gbp")}</strong></article><article class="stat-card"><span class="stat-label">Cancellation requests</span><strong class="stat-value">${recurringContracts.filter(c=>c.status==="cancellation_requested").length}</strong></article>`;
+  if (!recurringContracts.length) { list.innerHTML = '<p class="notice">No recurring services created yet.</p>'; return; }
+  list.innerHTML = recurringContracts.map((c) => `
+    <article class="recurring-card" data-recurring-id="${c._id}">
+      <div class="commission-header"><div><h3>${escapeHtml(c.name)}</h3><div class="commission-meta">${escapeHtml(c.client?.username || "Client")} · ${escapeHtml(c.client?.email || "")} · ${escapeHtml(c.commission?.title || "Project")}</div></div><span class="payment-status ${escapeHtml(c.status)}">${escapeHtml(recurringStatusLabel(c.status))}</span></div>
+      <div class="payment-amount">${formatMoney(c.amount,c.currency)} / ${c.interval === "year" ? "year" : "month"}</div>
+      ${c.description ? `<p class="commission-description">${escapeHtml(c.description)}</p>` : ""}
+      <div class="recurring-detail-grid"><div class="recurring-detail"><span>Next / period end</span><strong>${escapeHtml(recurringPeriod(c))}</strong></div><div class="recurring-detail"><span>Stripe subscription</span><strong>${c.stripeSubscriptionId ? "Connected" : "Awaiting setup"}</strong></div><div class="recurring-detail"><span>Created</span><strong>${formatDate(c.createdAt)}</strong></div></div>
+      ${c.status === "cancellation_requested" ? `<p class="notice cancellation-request"><strong>Client requested cancellation.</strong>${c.cancellationReason ? ` ${escapeHtml(c.cancellationReason)}` : ""}</p>` : ""}
+      <div class="card-actions">
+        ${["active","past_due","cancellation_requested"].includes(c.status) ? '<button class="button small secondary" data-recurring-cancel-period>Cancel at period end</button><button class="button small danger" data-recurring-cancel-now>Cancel immediately</button>' : ""}
+        ${c.status === "cancellation_requested" ? '<button class="button small secondary" data-recurring-decline>Decline request</button>' : ""}
+        ${["awaiting_setup","incomplete"].includes(c.status) ? '<button class="button small danger" data-recurring-cancel-now>Withdraw service</button>' : ""}
+      </div>
+    </article>`).join("");
+  list.querySelectorAll("[data-recurring-cancel-period]").forEach(b=>b.addEventListener("click",()=>adminCancelRecurring(b,"period_end")));
+  list.querySelectorAll("[data-recurring-cancel-now]").forEach(b=>b.addEventListener("click",()=>adminCancelRecurring(b,"immediate")));
+  list.querySelectorAll("[data-recurring-decline]").forEach(b=>b.addEventListener("click",()=>declineRecurringCancellation(b)));
+}
+
+async function createRecurringContract(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = Object.fromEntries(new FormData(form));
+  try {
+    await XDevsAuth.apiFetch("/api/recurring", { method:"POST", body:JSON.stringify(data) });
+    form.reset(); form.closest("dialog")?.close(); await loadRecurringContracts();
+  } catch (error) { alert(error.message); }
+}
+
+async function adminCancelRecurring(button, mode) {
+  const id = button.closest("[data-recurring-id]").dataset.recurringId;
+  const message = mode === "immediate" ? "Cancel this recurring service immediately? This stops the Stripe subscription now." : "Schedule this recurring service to cancel at the end of its current billing period?";
+  if (!confirm(message)) return;
+  try { await XDevsAuth.apiFetch(`/api/recurring/${id}/cancel`, { method:"PATCH", body:JSON.stringify({mode}) }); await loadRecurringContracts(); }
+  catch (error) { alert(error.message); }
+}
+
+async function declineRecurringCancellation(button) {
+  const id = button.closest("[data-recurring-id]").dataset.recurringId;
+  if (!confirm("Mark this cancellation request as resolved without cancelling the service?")) return;
+  try { await XDevsAuth.apiFetch(`/api/recurring/${id}/decline-cancellation`, { method:"PATCH" }); await loadRecurringContracts(); }
+  catch (error) { alert(error.message); }
+}
+
+function populateRecurringCommissionOptions() {
+  const select = document.getElementById("recurring-commission");
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = '<option value="">Choose a client / project</option>' + allCommissions.filter(i=>i.status!=="Rejected").map(i=>`<option value="${i._id}">${escapeHtml(i.client?.username || "Client")} — ${escapeHtml(i.title)}</option>`).join("");
+  select.value = current;
+}

@@ -25,6 +25,7 @@
         <button class="sidebar-link" type="button" data-client-view="commissions">Commissions</button>
         <button class="sidebar-link" type="button" data-client-view="past-works">Past Works</button>
         <button class="sidebar-link" type="button" data-client-view="payments">Payments</button>
+        <button class="sidebar-link" type="button" data-client-view="recurring">Recurring services</button>
         <button class="sidebar-link" type="button" data-client-view="invoices">Invoices</button>
         <button class="sidebar-link" type="button" data-client-view="files">Files</button>
 <button class="sidebar-link" type="button" data-client-view="chat">Live chat <span class="notification-badge chat-unread-badge" data-chat-unread hidden>0</span></button>
@@ -195,6 +196,14 @@
       </section>
 
 
+
+      <section class="panel page-section" id="recurring" data-client-section="recurring" hidden>
+        <div class="panel-header">
+          <div><h2>Recurring services</h2><p class="commission-meta">Your maintenance, hosting and ongoing XDevs services.</p></div>
+        </div>
+        <div class="notice recurring-policy-note">To cancel an ongoing service, submit a cancellation request here. XDevs will review and process the actual cancellation in accordance with the service agreement and applicable rights.</div>
+        <div class="payment-list recurring-list" id="client-recurring-list"><p class="notice">Loading recurring services…</p></div>
+      </section>
 
       <section class="panel page-section" id="invoices" data-client-section="invoices" hidden>
         <div class="panel-header">

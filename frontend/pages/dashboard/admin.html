@@ -25,6 +25,7 @@
         <button class="sidebar-link" type="button" data-view="commissions">Commissions</button>
 
         <button class="sidebar-link" type="button" data-view="payments">Payments</button>
+        <button class="sidebar-link" type="button" data-view="recurring">Recurring services</button>
         <button class="sidebar-link" type="button" data-view="invoices">Invoice archive</button>
         <button class="sidebar-link" type="button" data-view="files">Files</button>
 <button class="sidebar-link" type="button" data-view="chat">Live chat <span class="notification-badge chat-unread-badge" data-chat-unread hidden>0</span></button>
@@ -179,6 +180,15 @@
 
 
 
+      <section class="panel page-section" data-section="recurring" hidden>
+        <div class="panel-header">
+          <div><h2>Recurring services</h2><p class="commission-meta">Maintenance, hosting and other ongoing contracts billed securely through Stripe.</p></div>
+          <button class="button" type="button" data-open-dialog="recurring-dialog">Create recurring service</button>
+        </div>
+        <div class="recurring-summary" id="admin-recurring-summary"></div>
+        <div class="payment-list recurring-list" id="admin-recurring-list"><p class="notice">Loading recurring services…</p></div>
+      </section>
+
       <section class="panel page-section" data-section="invoices" hidden>
         <div class="panel-header">
           <div><h2>Invoice archive</h2><p class="commission-meta">Permanent records for paid, outstanding, refunded, cancelled and pro bono invoices.</p></div>
@@ -253,6 +263,21 @@
     </main>
   </div>
 
+
+
+  <dialog id="recurring-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><div><h2>Create recurring service</h2><p class="commission-meta">The client completes Stripe setup. Only XDevs can execute cancellation.</p></div><button class="icon-button" type="button" data-close-dialog>×</button></div>
+      <form class="form-grid" id="recurring-form">
+        <label>Client / project<select name="commissionId" id="recurring-commission" required></select></label>
+        <label>Service name<input name="name" maxlength="120" required placeholder="Website Maintenance"></label>
+        <label>Amount in GBP (£)<input name="amount" type="number" min="0.50" max="100000" step="0.01" required placeholder="25.00"></label>
+        <label>Billing frequency<select name="interval" required><option value="month">Monthly</option><option value="year">Yearly</option></select></label>
+        <label>Description<textarea name="description" maxlength="1200" placeholder="Hosting, updates, monitoring and maintenance…"></textarea></label>
+        <button class="button" type="submit">Create service</button>
+      </form>
+    </div>
+  </dialog>
 
   <dialog id="payment-dialog">
     <div class="modal-content">

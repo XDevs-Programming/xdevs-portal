@@ -4,6 +4,8 @@ const archiver = require("archiver");
 const Payment = require("../models/Payment");
 const Commission = require("../models/Commission");
 const Counter = require("../models/Counter");
+const RecurringContract = require("../models/RecurringContract");
+const Notification = require("../models/Notification");
 const { streamInvoice, createInvoiceBuffer } = require("../utils/invoice");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -234,6 +236,62 @@ async function stripeWebhook(req, res) {
   try { event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET); }
   catch (error) { return res.status(400).send(`Webhook signature verification failed: ${error.message}`); }
   const session = event.data.object;
+
+  // Recurring service lifecycle. Stripe remains the source of truth for billing.
+  const recurringId = session?.metadata?.recurringContractId || session?.parent?.subscription_details?.metadata?.recurringContractId;
+  const recurringSubscriptionId = typeof session?.subscription === "string"
+    ? session.subscription
+    : (session?.parent?.subscription_details?.subscription || null);
+  let recurringContract = recurringId && validId(recurringId)
+    ? await RecurringContract.findById(recurringId)
+    : null;
+  if (!recurringContract && recurringSubscriptionId) {
+    recurringContract = await RecurringContract.findOne({ stripeSubscriptionId: recurringSubscriptionId });
+  }
+  if (recurringContract) {
+    const contract = recurringContract;
+    {
+      if (event.type === "checkout.session.completed" && session.mode === "subscription") {
+        contract.stripeCustomerId = session.customer || contract.stripeCustomerId;
+        contract.stripeSubscriptionId = session.subscription || contract.stripeSubscriptionId;
+        contract.stripeCheckoutSessionId = session.id;
+        contract.status = "active";
+        await contract.save();
+      }
+      if (event.type === "customer.subscription.updated") {
+        contract.stripeCustomerId = session.customer || contract.stripeCustomerId;
+        contract.stripeSubscriptionId = session.id || contract.stripeSubscriptionId;
+        contract.cancelAtPeriodEnd = Boolean(session.cancel_at_period_end);
+        contract.currentPeriodEnd = session.current_period_end ? new Date(session.current_period_end * 1000) : contract.currentPeriodEnd;
+        if (session.cancel_at_period_end) contract.status = "cancelling";
+        else if (["active", "trialing"].includes(session.status)) contract.status = "active";
+        else if (session.status === "past_due") contract.status = "past_due";
+        else if (["incomplete", "incomplete_expired"].includes(session.status)) contract.status = "incomplete";
+        await contract.save();
+      }
+      if (event.type === "customer.subscription.deleted") {
+        contract.status = "cancelled";
+        contract.cancelledAt = new Date();
+        contract.cancelAtPeriodEnd = false;
+        await contract.save();
+      }
+      if (event.type === "invoice.paid") {
+        contract.status = contract.cancelAtPeriodEnd ? "cancelling" : "active";
+        contract.billingEvents.push({ type: "invoice_paid", amount: session.amount_paid || 0, currency: session.currency || "gbp", stripeInvoiceId: session.id || "", occurredAt: new Date() });
+        contract.billingEvents = contract.billingEvents.slice(-36);
+        await contract.save();
+        await Notification.create({ recipient: contract.client, type: "recurring_update", title: "Recurring payment received", message: `${contract.name} payment received successfully.`, link: "/pages/dashboard/client.html#recurring", metadata: { recurringContractId: contract._id.toString() } });
+      }
+      if (event.type === "invoice.payment_failed") {
+        contract.status = "past_due";
+        contract.billingEvents.push({ type: "payment_failed", amount: session.amount_due || 0, currency: session.currency || "gbp", stripeInvoiceId: session.id || "", occurredAt: new Date() });
+        contract.billingEvents = contract.billingEvents.slice(-36);
+        await contract.save();
+        await Notification.create({ recipient: contract.client, type: "recurring_update", title: "Recurring payment needs attention", message: `Stripe could not collect the latest payment for ${contract.name}.`, link: "/pages/dashboard/client.html#recurring", metadata: { recurringContractId: contract._id.toString() } });
+      }
+    }
+  }
+
   const paymentId = session?.metadata?.paymentId || session?.client_reference_id;
   if (paymentId && validId(paymentId)) {
     if (["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type)) {

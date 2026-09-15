@@ -14,6 +14,7 @@ const notificationSchema = new mongoose.Schema(
         "commission_new",
         "commission_completed",
         "payment_paid",
+        "recurring_update",
         "review_new",
         "file_uploaded",
         "chat_message",

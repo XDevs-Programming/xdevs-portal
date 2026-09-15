@@ -1635,3 +1635,15 @@ textarea {
 @keyframes wakeProgress { 0% { transform:translateX(-105%); } 50% { transform:translateX(75%); } 100% { transform:translateX(245%); } }
 @keyframes wakePulse { 50% { opacity:.45; } }
 @media (prefers-reduced-motion: reduce) { .wake-orbit span,.wake-progress span,.wake-status-dot { animation-duration:3s; } }
+
+/* v6.6 recurring services */
+.recurring-list { display: grid; gap: 1rem; }
+.recurring-card { border: 1px solid var(--border, rgba(255,255,255,.12)); border-radius: 18px; padding: 1.1rem; background: rgba(255,255,255,.025); }
+.recurring-card .payment-amount { margin: .65rem 0 .25rem; }
+.recurring-detail-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .7rem; margin: .9rem 0; }
+.recurring-detail { padding: .75rem; border-radius: 12px; background: rgba(255,255,255,.035); }
+.recurring-detail span { display:block; font-size:.75rem; opacity:.65; margin-bottom:.2rem; }
+.recurring-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; margin-bottom:1rem; }
+.recurring-policy-note { margin-bottom: 1rem; }
+.cancellation-request { border-left: 3px solid currentColor; }
+@media (max-width: 760px) { .recurring-detail-grid,.recurring-summary { grid-template-columns:1fr; } }

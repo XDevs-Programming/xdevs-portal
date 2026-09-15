@@ -17,6 +17,7 @@ const commissionRoutes = require("./routes/commissionRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const recurringRoutes = require("./routes/recurringRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const { installChatSocket } = require("./sockets/chatSocket");
@@ -120,7 +121,7 @@ app.use(morgan(production ? "combined" : "dev"));
 app.use("/api", standardHeaders);
 app.use("/api", apiLimiter);
 app.use("/api/auth", authLimiter);
-app.use(["/api/commissions", "/api/reviews", "/api/notifications", "/api/payments", "/api/files", "/api/chat"], (req, res, next) => {
+app.use(["/api/commissions", "/api/reviews", "/api/notifications", "/api/payments", "/api/recurring", "/api/files", "/api/chat"], (req, res, next) => {
   if (["POST", "PATCH", "PUT", "DELETE"].includes(req.method)) {
     return writeLimiter(req, res, next);
   }
@@ -161,6 +162,7 @@ app.use("/api/commissions", commissionRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/recurring", recurringRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/chat", chatRoutes);
 
