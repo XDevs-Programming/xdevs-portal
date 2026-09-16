@@ -1651,3 +1651,8 @@ textarea {
 .contract-modal{width:min(780px,94vw)}
 .contract-document{max-height:48vh;overflow:auto;white-space:pre-wrap;padding:18px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(0,0,0,.2);font:inherit;font-size:.88rem;line-height:1.6;color:var(--text-secondary,#b8c1d1)}
 .contract-check{display:flex;align-items:flex-start;gap:10px;margin:12px 0;line-height:1.45}.contract-check input{margin-top:3px}
+
+.agreement-state{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0;padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:.82rem}
+.agreement-state.pending{color:#d7b66d;background:rgba(215,182,109,.06)}
+.agreement-state.signed{color:#7ed8a8;background:rgba(126,216,168,.06)}
+.agreement-state small{opacity:.72}

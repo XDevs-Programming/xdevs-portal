@@ -582,16 +582,19 @@ function renderClientRecurringContracts() {
     <article class="recurring-card" data-client-recurring-id="${c._id}">
       <div class="commission-header"><div><h3>${escapeHtml(c.name)}</h3><div class="commission-meta">${escapeHtml(c.commission?.title || "XDevs service")}</div></div><span class="payment-status ${escapeHtml(c.status)}">${escapeHtml(String(c.status).replaceAll("_"," "))}</span></div>
       <div class="payment-amount">${formatMoney(c.amount,c.currency)} / ${c.interval === "year" ? "year" : "month"}</div>
+      <div class="agreement-state ${c.agreementAccepted ? "signed" : "pending"}"><span>${c.agreementAccepted ? "✓ Agreement signed" : "Agreement awaiting signature"}</span>${c.agreementAcceptedAt ? `<small>${formatDate(c.agreementAcceptedAt)}</small>` : ""}</div>
       ${c.description ? `<p class="commission-description">${escapeHtml(c.description)}</p>` : ""}
       <div class="recurring-detail-grid"><div class="recurring-detail"><span>Billing</span><strong>${c.interval === "year" ? "Yearly" : "Monthly"}</strong></div><div class="recurring-detail"><span>Current period ends</span><strong>${c.currentPeriodEnd ? formatDate(c.currentPeriodEnd) : "Shown after setup"}</strong></div><div class="recurring-detail"><span>Payment setup</span><strong>${c.stripeSubscriptionId ? "Active through Stripe" : "Action required"}</strong></div></div>
       ${c.status === "cancellation_requested" ? '<p class="notice">Your cancellation request has been sent to XDevs for review.</p>' : ""}
       ${c.status === "cancelling" ? `<p class="notice">Cancellation is scheduled${c.currentPeriodEnd ? ` for ${formatDate(c.currentPeriodEnd)}` : " at the end of the billing period"}.</p>` : ""}
       <div class="card-actions">
-        ${["awaiting_setup","incomplete"].includes(c.status) ? `<button class="button" data-recurring-agreement>${c.agreementAccepted ? "Continue to recurring payment" : "Review & accept agreement"}</button>` : ""}
+        <button class="button ${c.agreementAccepted ? "secondary" : ""}" data-recurring-agreement>${c.agreementAccepted ? "View signed agreement" : "Review & accept agreement"}</button>
+        ${["awaiting_setup","incomplete"].includes(c.status) && c.agreementAccepted ? '<button class="button" data-recurring-setup>Set up recurring payment</button>' : ""}
         ${["active","past_due"].includes(c.status) ? '<button class="button secondary" data-recurring-request-cancel>Request cancellation</button>' : ""}
       </div>
     </article>`).join("");
   list.querySelectorAll("[data-recurring-agreement]").forEach(b=>b.addEventListener("click",()=>openRecurringAgreement(b)));
+  list.querySelectorAll("[data-recurring-setup]").forEach(b=>b.addEventListener("click",()=>setupRecurringPayment(b)));
   list.querySelectorAll("[data-recurring-request-cancel]").forEach(b=>b.addEventListener("click",()=>requestRecurringCancellation(b)));
 }
 
