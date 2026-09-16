@@ -6,6 +6,8 @@ const router = express.Router();
 router.get("/mine", protect, controller.getMine);
 router.get("/", protect, requireRole("admin"), controller.getAll);
 router.post("/", protect, requireRole("admin"), controller.createContract);
+router.get("/:id/agreement", protect, controller.getAgreement);
+router.post("/:id/agreement/accept", protect, controller.acceptAgreement);
 router.post("/:id/setup", protect, controller.startSetup);
 router.post("/:id/request-cancellation", protect, controller.requestCancellation);
 router.patch("/:id/cancel", protect, requireRole("admin"), controller.cancelContract);

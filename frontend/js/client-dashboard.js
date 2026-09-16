@@ -587,11 +587,11 @@ function renderClientRecurringContracts() {
       ${c.status === "cancellation_requested" ? '<p class="notice">Your cancellation request has been sent to XDevs for review.</p>' : ""}
       ${c.status === "cancelling" ? `<p class="notice">Cancellation is scheduled${c.currentPeriodEnd ? ` for ${formatDate(c.currentPeriodEnd)}` : " at the end of the billing period"}.</p>` : ""}
       <div class="card-actions">
-        ${["awaiting_setup","incomplete"].includes(c.status) ? '<button class="button" data-recurring-setup>Set up recurring payment</button>' : ""}
+        ${["awaiting_setup","incomplete"].includes(c.status) ? `<button class="button" data-recurring-agreement>${c.agreementAccepted ? "Continue to recurring payment" : "Review & accept agreement"}</button>` : ""}
         ${["active","past_due"].includes(c.status) ? '<button class="button secondary" data-recurring-request-cancel>Request cancellation</button>' : ""}
       </div>
     </article>`).join("");
-  list.querySelectorAll("[data-recurring-setup]").forEach(b=>b.addEventListener("click",()=>setupRecurringPayment(b)));
+  list.querySelectorAll("[data-recurring-agreement]").forEach(b=>b.addEventListener("click",()=>openRecurringAgreement(b)));
   list.querySelectorAll("[data-recurring-request-cancel]").forEach(b=>b.addEventListener("click",()=>requestRecurringCancellation(b)));
 }
 

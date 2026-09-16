@@ -1647,3 +1647,7 @@ textarea {
 .recurring-policy-note { margin-bottom: 1rem; }
 .cancellation-request { border-left: 3px solid currentColor; }
 @media (max-width: 760px) { .recurring-detail-grid,.recurring-summary { grid-template-columns:1fr; } }
+
+.contract-modal{width:min(780px,94vw)}
+.contract-document{max-height:48vh;overflow:auto;white-space:pre-wrap;padding:18px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(0,0,0,.2);font:inherit;font-size:.88rem;line-height:1.6;color:var(--text-secondary,#b8c1d1)}
+.contract-check{display:flex;align-items:flex-start;gap:10px;margin:12px 0;line-height:1.45}.contract-check input{margin-top:3px}

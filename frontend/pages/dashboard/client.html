@@ -331,5 +331,17 @@
   <script src="../../js/notifications.js"></script>
   <script src="../../js/chat.js"></script>
   <script src="../../js/client-dashboard.js"></script>
+<dialog id="recurring-agreement-dialog" class="modal contract-dialog">
+  <div class="modal-content contract-modal">
+    <div class="modal-header"><div><p class="eyebrow">SERVICE AGREEMENT</p><h2>Review &amp; accept</h2></div><button type="button" class="modal-close" data-agreement-close aria-label="Close">×</button></div>
+    <pre id="agreement-document" class="contract-document">Loading agreement…</pre>
+    <label class="field"><span>Full legal name</span><input id="agreement-legal-name" maxlength="120" autocomplete="name"></label>
+    <label class="contract-check"><input id="agreement-terms" type="checkbox"><span>I have read and agree to this maintenance/hosting agreement.</span></label>
+    <label class="contract-check"><input id="agreement-recurring" type="checkbox"><span>I understand the recurring price and billing frequency shown in this agreement.</span></label>
+    <p id="agreement-message" class="notice" hidden></p>
+    <div class="card-actions"><button id="agreement-accept" type="button" class="button">Sign &amp; Accept Agreement</button></div>
+  </div>
+</dialog>
+
 </body>
 </html>
