@@ -593,7 +593,6 @@ function renderClientRecurringContracts() {
         ${["active","past_due"].includes(c.status) ? '<button class="button secondary" data-recurring-request-cancel>Request cancellation</button>' : ""}
       </div>
     </article>`).join("");
-  list.querySelectorAll("[data-recurring-agreement]").forEach(b=>b.addEventListener("click",()=>openRecurringAgreement(b)));
   list.querySelectorAll("[data-recurring-setup]").forEach(b=>b.addEventListener("click",()=>setupRecurringPayment(b)));
   list.querySelectorAll("[data-recurring-request-cancel]").forEach(b=>b.addEventListener("click",()=>requestRecurringCancellation(b)));
 }
@@ -612,3 +611,49 @@ async function requestRecurringCancellation(button) {
   try { await XDevsAuth.apiFetch(`/api/recurring/${id}/request-cancellation`, {method:"POST",body:JSON.stringify({reason})}); await loadClientRecurringContracts(); }
   catch(error) { alert(error.message); }
 }
+
+
+let agreementContractId = null;
+async function openRecurringAgreement(button) {
+  agreementContractId = button.closest("[data-client-recurring-id]")?.dataset.clientRecurringId;
+  if (!agreementContractId) return alert("Could not identify this recurring service.");
+  const dialog=document.getElementById("recurring-agreement-dialog");
+  const doc=document.getElementById("agreement-document");
+  const msg=document.getElementById("agreement-message");
+  if(!dialog||!doc||!msg) return alert("Agreement window is unavailable. Refresh the page and try again.");
+  msg.hidden=true; doc.textContent="Loading agreement…";
+  if(typeof dialog.showModal==="function") dialog.showModal(); else dialog.setAttribute("open","");
+  try {
+    const result=await XDevsAuth.apiFetch(`/api/recurring/${agreementContractId}/agreement`);
+    doc.textContent=result.snapshot;
+    const btn=document.getElementById("agreement-accept");
+    if(result.accepted){
+      document.getElementById("agreement-legal-name").value=result.acceptedName||"";
+      document.getElementById("agreement-legal-name").disabled=true;
+      document.getElementById("agreement-terms").checked=true; document.getElementById("agreement-terms").disabled=true;
+      document.getElementById("agreement-recurring").checked=true; document.getElementById("agreement-recurring").disabled=true;
+      btn.hidden=true; msg.textContent="This agreement has already been signed electronically."; msg.hidden=false;
+    } else btn.hidden=false;
+  } catch(error){doc.textContent="";msg.textContent=error.message||"Could not load agreement.";msg.hidden=false;}
+}
+document.addEventListener("click",event=>{
+  const b=event.target.closest("[data-recurring-agreement]");
+  if(!b)return; event.preventDefault(); openRecurringAgreement(b);
+});
+document.querySelector("[data-agreement-close]")?.addEventListener("click",()=>{
+  const d=document.getElementById("recurring-agreement-dialog"); if(!d)return;
+  if(typeof d.close==="function")d.close();else d.removeAttribute("open");
+});
+document.getElementById("agreement-accept")?.addEventListener("click",async()=>{
+  const legalName=document.getElementById("agreement-legal-name").value.trim();
+  const confirmTerms=document.getElementById("agreement-terms").checked;
+  const confirmRecurring=document.getElementById("agreement-recurring").checked;
+  const msg=document.getElementById("agreement-message"),btn=document.getElementById("agreement-accept");
+  if(!legalName||!confirmTerms||!confirmRecurring){msg.textContent="Enter your legal name and confirm both statements.";msg.hidden=false;return;}
+  btn.disabled=true;
+  try{
+    await XDevsAuth.apiFetch(`/api/recurring/${agreementContractId}/agreement/accept`,{method:"POST",body:JSON.stringify({legalName,confirmTerms,confirmRecurring})});
+    msg.textContent="Agreement signed successfully. You can now set up recurring payment.";msg.hidden=false;
+    btn.hidden=true; await loadClientRecurringContracts();
+  }catch(error){msg.textContent=error.message||"Could not sign agreement.";msg.hidden=false;btn.disabled=false;}
+});
