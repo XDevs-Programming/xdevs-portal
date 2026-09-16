@@ -1656,3 +1656,184 @@ textarea {
 .agreement-state.pending{color:#d7b66d;background:rgba(215,182,109,.06)}
 .agreement-state.signed{color:#7ed8a8;background:rgba(126,216,168,.06)}
 .agreement-state small{opacity:.72}
+
+
+/* v6.6.4 — responsive electronic contract modal */
+#recurring-agreement-dialog.contract-dialog {
+  width: min(920px, calc(100vw - 32px));
+  max-width: 920px;
+  max-height: min(90dvh, 900px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  background: #101522;
+  color: inherit;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+#recurring-agreement-dialog.contract-dialog::backdrop {
+  background: rgba(2,5,10,.76);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+#recurring-agreement-dialog .contract-modal {
+  width: 100%;
+  max-width: none;
+  max-height: min(90dvh, 900px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#recurring-agreement-dialog .modal-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.018);
+}
+#recurring-agreement-dialog .modal-header h2 { margin: 3px 0 0; }
+#recurring-agreement-dialog .modal-close {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 11px;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+#recurring-agreement-dialog .contract-document {
+  flex: 1 1 auto;
+  min-height: 220px;
+  max-height: 46dvh;
+  overflow: auto;
+  margin: 18px 22px 14px;
+  padding: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  background: rgba(0,0,0,.2);
+  font: inherit;
+  font-size: .9rem;
+  line-height: 1.65;
+  color: var(--text-secondary,#b8c1d1);
+  scrollbar-gutter: stable;
+}
+#recurring-agreement-dialog .field,
+#recurring-agreement-dialog .contract-check,
+#recurring-agreement-dialog #agreement-message,
+#recurring-agreement-dialog .card-actions {
+  margin-left: 22px;
+  margin-right: 22px;
+}
+#recurring-agreement-dialog .field {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+#recurring-agreement-dialog .field input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+#recurring-agreement-dialog .contract-check {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  line-height: 1.42;
+}
+#recurring-agreement-dialog .contract-check input {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+#recurring-agreement-dialog .card-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 0 20px;
+}
+#recurring-agreement-dialog #agreement-accept {
+  min-height: 44px;
+}
+
+/* Fallback used where the native dialog API is unavailable. */
+#recurring-agreement-dialog[open] { display: block; }
+
+@media (max-width: 700px) {
+  #recurring-agreement-dialog.contract-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 16px;
+  }
+  #recurring-agreement-dialog .contract-modal {
+    max-height: calc(100dvh - 20px);
+  }
+  #recurring-agreement-dialog .modal-header {
+    padding: 16px 16px 13px;
+  }
+  #recurring-agreement-dialog .contract-document {
+    min-height: 180px;
+    max-height: 42dvh;
+    margin: 14px 16px 12px;
+    padding: 15px;
+    font-size: .84rem;
+    line-height: 1.55;
+  }
+  #recurring-agreement-dialog .field,
+  #recurring-agreement-dialog .contract-check,
+  #recurring-agreement-dialog #agreement-message,
+  #recurring-agreement-dialog .card-actions {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  #recurring-agreement-dialog .card-actions {
+    padding-bottom: 16px;
+  }
+  #recurring-agreement-dialog #agreement-accept {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  #recurring-agreement-dialog.contract-dialog {
+    width: calc(100vw - 12px);
+    max-height: calc(100dvh - 12px);
+    border-radius: 14px;
+  }
+  #recurring-agreement-dialog .contract-modal {
+    max-height: calc(100dvh - 12px);
+  }
+  #recurring-agreement-dialog .modal-header {
+    padding: 14px 14px 11px;
+  }
+  #recurring-agreement-dialog .modal-close {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+  #recurring-agreement-dialog .contract-document {
+    max-height: 39dvh;
+    margin: 12px 14px 10px;
+    padding: 13px;
+    font-size: .8rem;
+  }
+  #recurring-agreement-dialog .field,
+  #recurring-agreement-dialog .contract-check,
+  #recurring-agreement-dialog #agreement-message,
+  #recurring-agreement-dialog .card-actions {
+    margin-left: 14px;
+    margin-right: 14px;
+  }
+}
